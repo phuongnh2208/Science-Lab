@@ -62,6 +62,47 @@ export async function listAdminChapters(gradeId: string) {
   }
 }
 
+export async function createAdminChapter(input: {
+  gradeId: string
+  title: string
+  chapterNumber: string
+}) {
+  if (!supabase) return { id: null, error: 'Chưa cấu hình kết nối Supabase.' }
+  const { data: grade, error: gradeError } = await supabase
+    .from('grades')
+    .select('education_levels(code)')
+    .eq('id', input.gradeId)
+    .single()
+  if (gradeError) return { id: null, error: `Không thể xác định khối lớp: ${gradeError.message}` }
+
+  const educationLevel = Array.isArray(grade.education_levels)
+    ? grade.education_levels[0]
+    : grade.education_levels
+  const subjectCode = educationLevel?.code === 'THPT' ? 'VAT_LI' : 'KHTN'
+  const [{ data: subject, error: subjectError }, { data: textbook, error: textbookError }] = await Promise.all([
+    supabase.from('subjects').select('id').eq('code', subjectCode).single(),
+    supabase.from('textbook_series').select('id').eq('code', 'KNTT').single(),
+  ])
+  if (subjectError) return { id: null, error: `Không thể xác định môn học: ${subjectError.message}` }
+  if (textbookError) return { id: null, error: `Không thể xác định bộ sách: ${textbookError.message}` }
+
+  const { data, error } = await supabase
+    .from('chapters')
+    .insert({
+      grade_id: input.gradeId,
+      subject_id: subject.id,
+      textbook_series_id: textbook.id,
+      title: input.title.trim(),
+      chapter_number: input.chapterNumber ? Number(input.chapterNumber) : null,
+    })
+    .select('id,title,chapter_number')
+    .single()
+  return {
+    id: data?.id ?? null,
+    error: error ? `Không thể tạo chương: ${error.message}` : null,
+  }
+}
+
 export async function createAdminLesson(input: {
   chapterId: string
   title: string
@@ -167,7 +208,22 @@ export async function uploadWorksheet(userId: string, file: File) {
     contentType: file.type,
     upsert: false,
   })
-  return { path: error ? null : path, error: error ? `Không thể tải phiếu bài tập lên: ${error.message}` : null }
+  if (error) {
+    return { path: null, error: `Không thể tải phiếu bài tập lên: ${error.message}` }
+  }
+
+  const { data: verification, error: verificationError } = await supabase.storage
+    .from('worksheets')
+    .createSignedUrl(path, 60)
+  if (verificationError || !verification?.signedUrl) {
+    await supabase.storage.from('worksheets').remove([path])
+    return {
+      path: null,
+      error: `File đã được gửi nhưng không thể xác nhận trong bucket worksheets: ${verificationError?.message ?? 'không tìm thấy object'}. Kiểm tra bucket và Storage Policies trong Supabase.`,
+    }
+  }
+
+  return { path, error: null }
 }
 
 export function createContentBlock(type: ContentBlockType): ContentBlock {

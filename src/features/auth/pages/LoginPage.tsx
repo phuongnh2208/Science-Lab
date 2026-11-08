@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { ArrowRight, LogIn, UserPlus } from 'lucide-react'
+import { LogIn, Mail, UserPlus } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../../../lib/supabase'
 
@@ -14,6 +14,8 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [canResendVerification, setCanResendVerification] = useState(false)
+  const [isResending, setIsResending] = useState(false)
 
   useEffect(() => {
     if (!supabase) return
@@ -31,24 +33,42 @@ export function LoginPage() {
 
     setIsSubmitting(true)
     setMessage('')
+    setCanResendVerification(false)
     const result = mode === 'login'
       ? await supabase.auth.signInWithPassword({ email, password })
       : await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: fullName.trim() } },
+        options: {
+          data: { full_name: fullName.trim() },
+          emailRedirectTo: `${window.location.origin}/`,
+        },
       })
     setIsSubmitting(false)
 
     if (result.error) {
       setMessage(result.error.message)
+      setCanResendVerification(result.error.message.toLowerCase().includes('email not confirmed'))
       return
     }
     if (mode === 'register' && !result.data.session) {
       setMessage('Đăng ký thành công. Hãy kiểm tra email để xác nhận tài khoản.')
+      setCanResendVerification(true)
       return
     }
     navigate('/', { replace: true })
+  }
+
+  async function resendVerificationEmail() {
+    if (!supabase || !email) return
+    setIsResending(true)
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/` },
+    })
+    setIsResending(false)
+    setMessage(error ? `Không thể gửi lại email: ${error.message}` : 'Đã gửi lại email xác thực. Hãy kiểm tra cả thư mục Spam.')
   }
 
   const isRegister = mode === 'register'
@@ -62,7 +82,8 @@ export function LoginPage() {
         <label>Email<input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" /></label>
         <label>Mật khẩu<input required type="password" minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Tối thiểu 6 ký tự" autoComplete={isRegister ? 'new-password' : 'current-password'} /></label>
         {message && <p className="form-message">{message}</p>}
-        <button className="primary-button" disabled={isSubmitting} type="submit">{isRegister ? <UserPlus size={17} /> : <LogIn size={17} />}{isSubmitting ? 'Đang xử lý...' : isRegister ? 'Đăng ký tài khoản' : 'Đăng nhập'}<ArrowRight size={16} /></button>
+        {canResendVerification && <button className="login-resend" disabled={isResending} type="button" onClick={() => void resendVerificationEmail()}><Mail size={16} />{isResending ? 'Đang gửi lại...' : 'Gửi lại email xác thực'}</button>}
+        <button className="primary-button" disabled={isSubmitting} type="submit">{isRegister ? <UserPlus size={17} /> : <LogIn size={17} />}{isSubmitting ? 'Đang xử lý...' : isRegister ? 'Đăng ký tài khoản' : 'Đăng nhập'}</button>
       </form>
       <button className="login-switch" type="button" onClick={() => { setMode(isRegister ? 'login' : 'register'); setMessage('') }}>{isRegister ? 'Đã có tài khoản? Đăng nhập' : 'Chưa có tài khoản? Đăng ký ngay'}</button>
       <Link className="login-home-link" to="/">Quay lại trang chủ</Link>

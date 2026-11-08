@@ -4,6 +4,7 @@ import type { Session } from '@supabase/supabase-js'
 import { BookOpen, ChevronDown, Eye, Plus, Save, Trash2 } from 'lucide-react'
 import {
   createAdminLesson,
+  createAdminChapter,
   createContentBlock,
   getLessonBlocks,
   listAdminChapters,
@@ -22,7 +23,9 @@ const blockTypes: ContentBlockType[] = ['TEXT', 'YOUTUBE', 'PHET', 'WORKSHEET', 
 export function AdminPage({ profile, session }: { profile: Profile | null; session: Session | null }) {
   const [grades, setGrades] = useState<Grade[]>([])
   const [lessons, setLessons] = useState<AdminLesson[]>([])
+  const [chapters, setChapters] = useState<Array<{ id: string; title: string; chapter_number: number | null }>>([])
   const [selectedGradeId, setSelectedGradeId] = useState('')
+  const [selectedChapterId, setSelectedChapterId] = useState('')
   const [selectedLessonId, setSelectedLessonId] = useState('')
   const [blocks, setBlocks] = useState<ContentBlock[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -31,6 +34,7 @@ export function AdminPage({ profile, session }: { profile: Profile | null; sessi
   const [error, setError] = useState('')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
+  const [isCreateChapterOpen, setIsCreateChapterOpen] = useState(false)
 
   useEffect(() => {
     if (profile?.role !== 'ADMIN') return
@@ -42,6 +46,8 @@ export function AdminPage({ profile, session }: { profile: Profile | null; sessi
 
   useEffect(() => {
     if (!selectedGradeId || profile?.role !== 'ADMIN') {
+      setChapters([])
+      setSelectedChapterId('')
       setLessons([])
       setSelectedLessonId('')
       setBlocks([])
@@ -50,11 +56,13 @@ export function AdminPage({ profile, session }: { profile: Profile | null; sessi
     setIsLoading(true)
     setError('')
     setIsEditOpen(false)
-    void listAdminLessons(selectedGradeId).then((result) => {
-      setLessons(result.data)
+    Promise.all([listAdminChapters(selectedGradeId), listAdminLessons(selectedGradeId)]).then(([chapterResult, lessonResult]) => {
+      setChapters(chapterResult.data)
+      setSelectedChapterId('')
+      setLessons(lessonResult.data)
       setSelectedLessonId('')
       setBlocks([])
-      setError(result.error ?? '')
+      setError(chapterResult.error ?? lessonResult.error ?? '')
       setIsLoading(false)
     })
   }, [selectedGradeId, profile])
@@ -116,7 +124,9 @@ export function AdminPage({ profile, session }: { profile: Profile | null; sessi
   if (profile?.role !== 'ADMIN') return <section className="page-section"><div className="error-message">Bạn không có quyền truy cập khu vực quản trị.</div></section>
 
   const selectedGrade = grades.find((grade) => grade.id === selectedGradeId)
+  const selectedChapter = chapters.find((chapter) => chapter.id === selectedChapterId)
   const selectedLesson = lessons.find((lesson) => lesson.id === selectedLessonId)
+  const chapterLessons = lessons.filter((lesson) => lesson.chapter_id === selectedChapterId)
 
   return <section className="page-section admin-page">
     <div className="page-heading">
@@ -137,8 +147,10 @@ export function AdminPage({ profile, session }: { profile: Profile | null; sessi
           <h2>Chọn khối lớp</h2>
           <select value={selectedGradeId} onChange={(event) => {
             setSelectedGradeId(event.target.value)
+            setSelectedChapterId('')
             setIsCreateOpen(false)
             setIsEditOpen(false)
+            setIsCreateChapterOpen(false)
             setMessage('')
           }}>
             <option value="">-- Chọn khối lớp --</option>
@@ -147,29 +159,34 @@ export function AdminPage({ profile, session }: { profile: Profile | null; sessi
         </div>
         <ChevronDown className="step-arrow" size={20} />
       </div>
-      <div className={`selection-step ${selectedGradeId ? 'is-active' : 'is-disabled'}`}>
+      <div className={`selection-step ${selectedGradeId && chapters.length ? 'is-active' : 'is-disabled'}`}>
         <div className="step-number">2</div>
         <div className="step-content">
           <span className="step-label">Bước 2</span>
+          <h2>Chọn chương</h2>
+          {!selectedGradeId ? <p className="step-hint">Chọn khối lớp trước.</p> : chapters.length === 0 ? <div className="lesson-picker"><p className="step-hint">Khối {selectedGrade?.name} chưa có chương.</p><button className="secondary-button" type="button" onClick={() => setIsCreateChapterOpen(true)}><Plus size={16} /> Thêm chương</button></div> : <div className="lesson-picker"><select value={selectedChapterId} onChange={(event) => { setSelectedChapterId(event.target.value); setSelectedLessonId(''); setIsCreateOpen(false); setMessage('') }}><option value="">-- Chọn chương của {selectedGrade?.name} --</option>{chapters.map((chapter) => <option key={chapter.id} value={chapter.id}>{chapter.chapter_number ? `Chương ${chapter.chapter_number}: ` : ''}{chapter.title}</option>)}</select><button className="secondary-button" type="button" onClick={() => setIsCreateChapterOpen(true)}><Plus size={16} /> Thêm chương</button></div>}
+        </div>
+      </div>
+      <div className={`selection-step ${selectedChapterId ? 'is-active' : 'is-disabled'}`}>
+        <div className="step-number">3</div>
+        <div className="step-content">
+          <span className="step-label">Bước 3</span>
           <h2>Chọn hoặc tạo bài học</h2>
-          {!selectedGradeId ? <p className="step-hint">Chọn khối lớp để xem danh sách bài học.</p> : (
-            <div className="lesson-picker">
-              <select value={selectedLessonId} onChange={(event) => {
-                setSelectedLessonId(event.target.value)
-                setIsCreateOpen(false)
-                setMessage('')
-              }}>
-                <option value="">-- Chọn bài học của {selectedGrade?.name} --</option>
-                {lessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}
-              </select>
-              <button className="secondary-button" type="button" onClick={() => setIsCreateOpen(true)}><Plus size={16} /> Tạo bài mới</button>
-              {selectedLessonId && <button className="secondary-button" type="button" onClick={() => { setIsCreateOpen(false); setIsEditOpen(true); setMessage('') }}>Chỉnh sửa bài học</button>}
-            </div>
-          )}
+          {!selectedChapterId ? <p className="step-hint">Chọn chương để quản lý bài học.</p> : <div className="lesson-picker"><select value={selectedLessonId} onChange={(event) => { setSelectedLessonId(event.target.value); setIsCreateOpen(false); setMessage('') }}><option value="">-- Chọn bài học trong {selectedChapter?.title} --</option>{chapterLessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}</select><button className="secondary-button" type="button" onClick={() => setIsCreateOpen(true)}><Plus size={16} /> Tạo bài mới</button>{selectedLessonId && <button className="secondary-button" type="button" onClick={() => { setIsCreateOpen(false); setIsEditOpen(true); setMessage('') }}>Chỉnh sửa bài học</button>}</div>}
         </div>
       </div>
     </section>
 
+    {isCreateChapterOpen && selectedGradeId && <CreateChapterForm gradeId={selectedGradeId} gradeName={selectedGrade?.name ?? ''} onCreated={(chapter) => {
+      setIsCreateChapterOpen(false)
+      setSelectedChapterId(chapter.id)
+      setMessage('Đã thêm chương mới.')
+      void Promise.all([listAdminChapters(selectedGradeId), listAdminLessons(selectedGradeId)]).then(([chapterResult, lessonResult]) => {
+        setChapters(chapterResult.data)
+        setLessons(lessonResult.data)
+        setError(chapterResult.error ?? lessonResult.error ?? '')
+      })
+    }} onCancel={() => setIsCreateChapterOpen(false)} onError={setError} />}
     {isCreateOpen && selectedGradeId && <CreateLessonForm gradeId={selectedGradeId} gradeName={selectedGrade?.name ?? ''} userId={session.user.id} onCreated={(lessonId) => {
       setIsCreateOpen(false)
       setSelectedLessonId(lessonId)
@@ -192,6 +209,39 @@ export function AdminPage({ profile, session }: { profile: Profile | null; sessi
       </div>
     </div>}
   </section>
+}
+
+function CreateChapterForm({ gradeId, gradeName, onCreated, onCancel, onError }: {
+  gradeId: string
+  gradeName: string
+  onCreated: (chapter: { id: string; title: string; chapter_number: number | null }) => void
+  onCancel: () => void
+  onError: (message: string) => void
+}) {
+  const [title, setTitle] = useState('')
+  const [chapterNumber, setChapterNumber] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setIsSaving(true)
+    const result = await createAdminChapter({ gradeId, title, chapterNumber })
+    setIsSaving(false)
+    if (result.error || !result.id) {
+      onError(result.error ?? 'Không thể tạo chương.')
+      return
+    }
+    onCreated({ id: result.id, title: title.trim(), chapter_number: chapterNumber ? Number(chapterNumber) : null })
+  }
+
+  return <form className="create-lesson-form chapter-form" onSubmit={(event) => void handleSubmit(event)}>
+    <div className="form-section-heading"><div><span className="step-label">Thêm chương</span><h2>Chương cho {gradeName}</h2></div><button className="text-button" type="button" onClick={onCancel}>Hủy</button></div>
+    <div className="create-lesson-fields">
+      <label>Tên chương *<input required value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Ví dụ: Chương 1. Cơ học" /></label>
+      <label>Số chương<input type="number" min="1" value={chapterNumber} onChange={(event) => setChapterNumber(event.target.value)} /></label>
+      <button className="primary-button" type="submit" disabled={isSaving}>{isSaving ? 'Đang tạo...' : 'Thêm chương'}</button>
+    </div>
+  </form>
 }
 
 function CreateLessonForm({ gradeId, gradeName, userId, onCreated, onCancel, onError }: {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { LogIn, UserPlus } from 'lucide-react'
+import { LogIn, Mail, UserPlus } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 
 type AuthMode = 'login' | 'register'
@@ -11,6 +11,8 @@ export function AuthDialog({ compact = false }: { compact?: boolean }) {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [canResendVerification, setCanResendVerification] = useState(false)
+  const [isResending, setIsResending] = useState(false)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -21,17 +23,37 @@ export function AuthDialog({ compact = false }: { compact?: boolean }) {
 
     setIsSubmitting(true)
     setMessage('')
+    setCanResendVerification(false)
     const result =
       mode === 'login'
         ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({ email, password })
+        : await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/`,
+            },
+          })
     setIsSubmitting(false)
-    setMessage(
-      result.error?.message ??
-        (mode === 'login'
-          ? 'Đăng nhập thành công.'
-          : 'Đăng ký thành công. Kiểm tra email nếu cần xác nhận.'),
-    )
+    if (result.error) {
+      setMessage(result.error.message)
+      setCanResendVerification(result.error.message.toLowerCase().includes('email not confirmed'))
+      return
+    }
+    setMessage(mode === 'login' ? 'Đăng nhập thành công.' : 'Đăng ký thành công. Kiểm tra email nếu cần xác nhận.')
+    setCanResendVerification(mode === 'register' && !result.data.session)
+  }
+
+  async function resendVerificationEmail() {
+    if (!supabase || !email) return
+    setIsResending(true)
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/` },
+    })
+    setIsResending(false)
+    setMessage(error ? `Không thể gửi lại email: ${error.message}` : 'Đã gửi lại email xác thực. Hãy kiểm tra cả thư mục Spam.')
   }
 
   return (
@@ -48,6 +70,7 @@ export function AuthDialog({ compact = false }: { compact?: boolean }) {
           <input type="password" required minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} />
         </label>
         {message && <p className="form-message">{message}</p>}
+        {canResendVerification && <button className="login-resend" disabled={isResending} type="button" onClick={() => void resendVerificationEmail()}><Mail size={16} />{isResending ? 'Đang gửi lại...' : 'Gửi lại email xác thực'}</button>}
         <button className="primary-button" disabled={isSubmitting} type="submit">
           {mode === 'login' ? <LogIn size={16} /> : <UserPlus size={16} />}
           {isSubmitting ? 'Đang xử lý...' : mode === 'login' ? 'Đăng nhập' : 'Đăng ký'}

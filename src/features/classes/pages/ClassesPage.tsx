@@ -34,6 +34,7 @@ function ClassProfiles({ session }: { session: Session }) {
   const [notes, setNotes] = useState('')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editingClassId, setEditingClassId] = useState<string | null>(null)
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(null)
 
   const loadData = useCallback(async () => {
     setIsLoading(true)
@@ -60,6 +61,7 @@ function ClassProfiles({ session }: { session: Session }) {
   }
 
   function handleEdit(item: ClassProfile) {
+    setSelectedClassId(item.id)
     setEditingClassId(item.id)
     setName(item.name)
     setGradeId(item.grade_id ?? '')
@@ -81,8 +83,8 @@ function ClassProfiles({ session }: { session: Session }) {
     else { setMessage('Đã xóa hồ sơ lớp.'); await loadData() }
   }
 
-  return <section className="page-section"><div className="section-heading"><div><p className="eyebrow">Cá nhân hóa bài dạy</p><h1>Hồ sơ lớp của bạn</h1></div><button className="primary-button" type="button" onClick={() => { setIsCreateOpen(true); setError(''); setMessage('') }}><Plus size={16} /> Tạo hồ sơ lớp mới</button></div><div className="class-layout">
-    {isCreateOpen && <form className="class-form" onSubmit={(event) => void handleSubmit(event)}><div className="form-section-heading"><h3>{editingClassId ? 'Chỉnh sửa hồ sơ lớp' : 'Tạo hồ sơ lớp'}</h3><button className="text-button" type="button" onClick={() => { setIsCreateOpen(false); setEditingClassId(null) }}>Đóng</button></div>
+  return <section className="page-section"><div className="section-heading"><div><p className="eyebrow">Cá nhân hóa bài dạy</p><h1>Hồ sơ lớp của bạn</h1></div><button className="primary-button" type="button" onClick={() => { setIsCreateOpen(true); setEditingClassId(null); setSelectedClassId(null); setError(''); setMessage('') }}><Plus size={16} /> Tạo hồ sơ lớp mới</button></div><div className={`class-layout ${isCreateOpen ? 'has-form' : 'list-only'}`}>
+    {isCreateOpen && <div className="class-form-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) { setIsCreateOpen(false); setEditingClassId(null) } }}><form className="class-form" onSubmit={(event) => void handleSubmit(event)}><div className="form-section-heading"><h3>{editingClassId ? 'Chỉnh sửa hồ sơ lớp' : 'Tạo hồ sơ lớp'}</h3><button className="text-button" type="button" onClick={() => { setIsCreateOpen(false); setEditingClassId(null) }}>Đóng</button></div>
       <label>Tên lớp *<input required value={name} onChange={(event) => setName(event.target.value)} placeholder="Ví dụ: 8A1" /></label>
       <label>Khối lớp *<select required value={gradeId} onChange={(event) => setGradeId(event.target.value)}><option value="">-- Chọn khối lớp --</option>{grades.map((grade) => <option key={grade.id} value={grade.id}>{grade.name}</option>)}</select></label>
       <label>Trường<input value={schoolName} onChange={(event) => setSchoolName(event.target.value)} placeholder="Tên trường" /></label>
@@ -90,7 +92,13 @@ function ClassProfiles({ session }: { session: Session }) {
       <fieldset className="equipment-fieldset"><legend>Thiết bị có sẵn tại lớp</legend><div className="equipment-grid">{equipmentOptions.map(([value, label]) => <label className="equipment-option" key={value}><input type="checkbox" checked={equipment.includes(value)} onChange={(event) => setEquipment((current) => event.target.checked ? [...current, value] : current.filter((item) => item !== value))} />{label}</label>)}</div></fieldset>
       <label>Ghi chú điều kiện lớp<textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} placeholder="Nhu cầu đặc biệt, năng lực học sinh, lưu ý tổ chức..." /></label>
       {message && <p className="form-message success-message">{message}</p>}{error && <p className="form-message error-text">{error}</p>}<button className="primary-button" disabled={isSaving} type="submit">{editingClassId ? <Edit3 size={16} /> : <Plus size={16} />}{isSaving ? 'Đang lưu...' : editingClassId ? 'Lưu thay đổi' : 'Thêm hồ sơ lớp'}</button>
-    </form>}
-    <div className="class-list">{isLoading ? <p className="empty-message">Đang tải hồ sơ lớp...</p> : classes.length === 0 ? <p className="empty-message">Bạn chưa có hồ sơ lớp nào.</p> : classes.map((item) => <article className="class-card" key={item.id}><div><h3>{item.name}</h3><p>{item.grades?.name ?? 'Chưa gắn khối'}{item.school_name ? ` · ${item.school_name}` : ''}</p><small>{item.student_count ? `${item.student_count} học sinh` : 'Chưa nhập sĩ số'} · {item.equipment.length} thiết bị đã chọn</small></div><div className="class-card-actions"><button className="edit-button" type="button" onClick={() => handleEdit(item)} aria-label={`Chỉnh sửa ${item.name}`}><Edit3 size={16} /></button><button className="delete-button" type="button" onClick={() => void handleDelete(item.id)} aria-label={`Xóa ${item.name}`}><Trash2 size={16} /></button></div></article>)}</div>
+    </form></div>}
+    <div className="class-list">{isLoading ? <p className="empty-message">Đang tải hồ sơ lớp...</p> : classes.length === 0 ? <p className="empty-message">Bạn chưa có hồ sơ lớp nào.</p> : classes.map((item) => {
+      const isSelected = selectedClassId === item.id
+      return <article className={`class-card ${isSelected ? 'is-selected' : ''}`} key={item.id} onClick={() => setSelectedClassId(isSelected ? null : item.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setSelectedClassId(isSelected ? null : item.id) } }} role="button" tabIndex={0}>
+        <div className="class-card-summary"><div><h3>{item.name}</h3><p>{item.grades?.name ?? 'Chưa gắn khối'}{item.school_name ? ` · ${item.school_name}` : ''}</p><small>{item.student_count ? `${item.student_count} học sinh` : 'Chưa nhập sĩ số'} · {item.equipment.length} thiết bị đã chọn</small></div><div className="class-card-actions"><button className="edit-button" type="button" onClick={(event) => { event.stopPropagation(); handleEdit(item) }} aria-label={`Chỉnh sửa ${item.name}`}><Edit3 size={16} /></button><button className="delete-button" type="button" onClick={(event) => { event.stopPropagation(); void handleDelete(item.id) }} aria-label={`Xóa ${item.name}`}><Trash2 size={16} /></button></div></div>
+        {isSelected && <div className="class-card-details"><div><strong>Trường</strong><span>{item.school_name || 'Chưa cập nhật'}</span></div><div><strong>Sĩ số</strong><span>{item.student_count ? `${item.student_count} học sinh` : 'Chưa cập nhật'}</span></div><div><strong>Internet</strong><span>{item.internet_available ? 'Có' : 'Chưa có'}</span></div><div><strong>Máy chiếu</strong><span>{item.projector_available ? 'Có' : 'Chưa có'}</span></div><div className="class-card-detail-wide"><strong>Thiết bị</strong><span>{item.equipment.length ? item.equipment.map((value) => equipmentOptions.find(([option]) => option === value)?.[1] ?? value).join(', ') : 'Chưa chọn thiết bị'}</span></div>{item.notes && <div className="class-card-detail-wide"><strong>Ghi chú</strong><span>{item.notes}</span></div>}</div>}
+      </article>
+    })}</div>
   </div></section>
 }

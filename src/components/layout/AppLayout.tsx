@@ -94,7 +94,7 @@ export function AppLayout({
           <NavLink to="/lessons" onClick={closeMenu}>
             <BookOpen size={16} /> Bài học
           </NavLink>
-          {session && (
+          {session && profile?.role !== "ADMIN" && (
             <NavLink to="/classes" onClick={closeMenu}>
               <Users size={16} /> Hồ sơ lớp
             </NavLink>

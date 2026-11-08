@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { Dispatch, FormEvent, SetStateAction } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { Bot, Copy, Edit3, ExternalLink, FileText, Plus, Save, Trash2 } from 'lucide-react'
@@ -16,7 +16,6 @@ import {
   type PlanContent,
 } from '../services/lessonPlanService'
 import type { ContentBlock, Lesson } from '../../../types/domain'
-import { renderAsync } from 'docx-preview'
 
 const sections: Array<{ key: 'objectives' | 'equipment' | 'assessment'; label: string; placeholder: string }> = [
   { key: 'objectives', label: 'I. Mục tiêu', placeholder: 'Nêu kiến thức, năng lực và phẩm chất học sinh cần đạt...' },
@@ -290,7 +289,6 @@ function LearningMaterialsPreview({ blocks }: { blocks: ContentBlock[] }) {
 }
 
 function PlanResourcePreview({ block }: { block: ContentBlock }) {
-  const previewRef = useRef<HTMLDivElement>(null)
   const [url, setUrl] = useState('')
   const [error, setError] = useState('')
   const source = block.content.trim()
@@ -299,17 +297,12 @@ function PlanResourcePreview({ block }: { block: ContentBlock }) {
 
   useEffect(() => {
     if (block.type !== 'WORKSHEET' || !source) return
-    void createWorksheetSignedUrl(source).then(async (result) => {
+    void createWorksheetSignedUrl(source).then((result) => {
       if (result.error || !result.url) {
         setError(result.error ?? 'Không thể tạo liên kết học liệu.')
         return
       }
       setUrl(result.url)
-      if (/\.(docx)(?:$|[?#])/i.test(source) && previewRef.current) {
-        const response = await fetch(result.url)
-        if (!response.ok) throw new Error('Không thể tải DOCX.')
-        await renderAsync(await response.arrayBuffer(), previewRef.current)
-      }
     }).catch(() => setError('Không thể hiển thị học liệu.'))
   }, [block.type, source])
 
@@ -318,7 +311,7 @@ function PlanResourcePreview({ block }: { block: ContentBlock }) {
   if (youtubeId) return <div className="resource-preview"><div className="video-frame"><iframe src={`https://www.youtube.com/embed/${youtubeId}`} title={block.title || 'Video học liệu'} allowFullScreen /></div><ResourceLink href={source} label="Mở video trên YouTube" /></div>
   if (block.type === 'PHET') return <div className="resource-preview"><div className="phet-frame"><iframe src={source} title={block.title || 'Mô phỏng PhET'} allowFullScreen /></div><ResourceLink href={source} label="Mở mô phỏng PhET" /></div>
   if (block.type === 'WORKSHEET' && /\.pdf(?:$|[?#])/i.test(source)) return <div className="resource-preview"><iframe className="document-frame" src={url} title={block.title || 'Xem trước PDF'} /><ResourceLink href={url} label="Mở PDF" /></div>
-  if (block.type === 'WORKSHEET' && /\.docx(?:$|[?#])/i.test(source)) return <div className="resource-preview"><div ref={previewRef} className="docx-preview" /><ResourceLink href={url} label="Mở DOCX" /></div>
+  if (block.type === 'WORKSHEET' && /\.docx(?:$|[?#])/i.test(source)) return <div className="resource-preview"><ResourceLink href={url} label="Mở hoặc tải DOCX" /></div>
   if (isDocument) return <div className="resource-preview"><iframe className="document-frame" src={source} title={block.title || 'Xem trước tài liệu'} /><ResourceLink href={source} label="Mở tài liệu" /></div>
   if (block.type === 'IMAGE') return <div className="resource-preview"><img className="image-resource-preview" src={source} alt={block.title || 'Hình ảnh học liệu'} /><ResourceLink href={source} label="Mở hình ảnh" /></div>
   return <ResourceLink href={source} label={block.type === 'EXPERIMENT' ? 'Mở hướng dẫn thí nghiệm' : 'Mở học liệu'} />
@@ -491,17 +484,24 @@ function LessonPlanWorkspace({ session }: { session: Session }) {
       setError('Hãy chọn bài học trước khi dùng AI.')
       return
     }
-    const lesson = lessons.find((item) => item.id === lessonId)
-    if (!lesson) {
+    if (!lessons.some((item) => item.id === lessonId)) {
       setError('Không tìm thấy dữ liệu bài học đã chọn.')
       return
     }
     setIsGeneratingAi(true)
     setError('')
     setMessage('')
+    const lessonContentResult = await getPublishedLessonDetail(lessonId)
+    if (lessonContentResult.error || !lessonContentResult.data) {
+      setIsGeneratingAi(false)
+      setError(lessonContentResult.error ?? 'Không thể tải nội dung bài giảng đã chọn.')
+      return
+    }
+    const selectedBlocks = lessonContentResult.data.blocks
+    setLessonBlocks(selectedBlocks)
     const result = await generateAiLessonPlan({
-      lesson,
-      blocks: lessonBlocks,
+      lesson: lessonContentResult.data.lesson,
+      blocks: selectedBlocks,
       classProfile: classes.find((item) => item.id === classProfileId) ?? null,
       planType,
     })
@@ -511,7 +511,7 @@ function LessonPlanWorkspace({ session }: { session: Session }) {
       return
     }
     setContent(result.content)
-    setMessage('AI đã tạo gợi ý KHBD. Hãy kiểm tra và chỉnh sửa trước khi lưu.')
+    setMessage(`AI đã đọc ${selectedBlocks.length} block của bài “${lessonContentResult.data.lesson.title}” và tạo gợi ý KHBD. Hãy kiểm tra trước khi lưu.`)
   }
 
   async function handleCreate(event: FormEvent<HTMLFormElement>) {
@@ -610,7 +610,7 @@ function LessonPlanWorkspace({ session }: { session: Session }) {
         /> : null}
         {(!selectedPlanId || isEditing) && (<>
         <div className="ai-plan-banner"><div><strong><Bot size={18} /> Trợ lý AI tạo KHBD</strong><span>Chọn bài học để AI sắp xếp hoạt động theo nội dung bài giảng và hồ sơ lớp.</span></div><button className="primary-button ai-suggestion-button" type="button" onClick={() => void generateWithAi()} disabled={!lessonId || isLoadingLessonContent || isGeneratingAi}><Bot size={16} />{isGeneratingAi ? 'AI đang soạn...' : 'Gợi ý KHBD bằng AI'}</button></div>
-        {!selectedPlanId ? <form onSubmit={(event) => void handleCreate(event)}><div className="editor-form-grid"><label>Tên KHBD *<input required value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Ví dụ: Khối lượng riêng" /></label><label>Loại KHBD<select value={planType} onChange={(event) => setPlanType(event.target.value as LessonPlanType)}><option value="STANDARD">Công văn 5512</option><option value="STEM">STEM</option></select></label><label>Khối lớp<select value={selectedGrade} onChange={(event) => handleGradeChange(event.target.value)}><option value="all">-- Tất cả khối --</option>{availableGrades.map((grade) => <option key={grade.grade_number} value={grade.grade_number}>Lớp {grade.grade_number}</option>)}</select></label><label>Bài học *<select required value={lessonId} onChange={(event) => void handleLessonChange(event.target.value)}><option value="">-- Chọn bài học --</option>{filteredLessons.map((lesson) => <option key={lesson.id} value={lesson.id}>Lớp {lesson.chapters?.grades.grade_number} · {lesson.title}</option>)}</select></label><label>Hồ sơ lớp<select value={classProfileId} onChange={(event) => handleClassChange(event.target.value)}><option value="">Không gắn lớp cụ thể</option>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label></div>{lessonId && <div className="lesson-source-note">{isLoadingLessonContent ? 'Đang đọc học liệu bài giảng...' : `Đã đọc ${lessonBlocks.length} block và hồ sơ lớp để tạo gợi ý theo Công văn 5512.`}<div className="lesson-source-actions"><button className="text-button" type="button" onClick={() => void regenerateActivities()} disabled={isLoadingLessonContent || isGeneratingAi}>Tạo lại nội bộ</button><button className="secondary-button" type="button" onClick={() => void generateWithAi()} disabled={isLoadingLessonContent || isGeneratingAi}><Bot size={15} />{isGeneratingAi ? 'AI đang soạn...' : 'Gợi ý bằng AI'}</button></div></div>}{sections.map((section) => <PlanTextField key={section.key} section={section} content={content} setContent={setContent} />)}<ActivitiesEditor activities={content.activities} blocks={lessonBlocks} onChange={(activities) => setContent((current) => ({ ...current, activities }))} /><button className="primary-button" disabled={isSaving || isLoadingLessonContent || isGeneratingAi} type="submit"><Save size={16} />{isSaving ? 'Đang tạo...' : 'Lưu KHBD'}</button></form> : <><div className="editor-toolbar"><input value={title} onChange={(event) => setTitle(event.target.value)} /><div><button className="secondary-button" type="button" onClick={() => void handleSave()} disabled={isSaving}><Save size={16} /> Lưu</button><button className="delete-button" type="button" onClick={() => void handleDelete()} aria-label="Xóa KHBD"><Trash2 size={16} /></button></div></div>{sections.map((section) => <PlanTextField key={section.key} section={section} content={content} setContent={setContent} />)}<ActivitiesEditor activities={content.activities} blocks={lessonBlocks} onChange={(activities) => setContent((current) => ({ ...current, activities }))} /></>}</>)}
+        {!selectedPlanId ? <form onSubmit={(event) => void handleCreate(event)}><div className="editor-form-grid"><label>Tên KHBD *<input required value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Ví dụ: Khối lượng riêng" /></label><label>Loại KHBD<select value={planType} onChange={(event) => setPlanType(event.target.value as LessonPlanType)}><option value="STANDARD">Công văn 5512</option><option value="STEM">STEM</option></select></label><label>Khối lớp<select value={selectedGrade} onChange={(event) => handleGradeChange(event.target.value)}><option value="all">-- Tất cả khối --</option>{availableGrades.map((grade) => <option key={grade.grade_number} value={grade.grade_number}>Lớp {grade.grade_number}</option>)}</select></label><label>Bài học *<select required value={lessonId} onChange={(event) => void handleLessonChange(event.target.value)}><option value="">-- Chọn bài học --</option>{filteredLessons.map((lesson) => <option key={lesson.id} value={lesson.id}>Lớp {lesson.chapters?.grades.grade_number} · {lesson.title}</option>)}</select></label><label>Hồ sơ lớp<select value={classProfileId} onChange={(event) => handleClassChange(event.target.value)}><option value="">Không gắn lớp cụ thể</option>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label></div>{lessonId && <div className="lesson-source-note">{isLoadingLessonContent ? 'Đang đọc học liệu bài giảng...' : `Bài đang chọn: ${lessons.find((item) => item.id === lessonId)?.title ?? 'Không xác định'} · đã đọc ${lessonBlocks.length} block.`}<div className="lesson-source-actions"><button className="text-button" type="button" onClick={() => void regenerateActivities()} disabled={isLoadingLessonContent || isGeneratingAi}>Tạo lại nội bộ</button><button className="secondary-button" type="button" onClick={() => void generateWithAi()} disabled={isLoadingLessonContent || isGeneratingAi}><Bot size={15} />{isGeneratingAi ? 'AI đang soạn...' : 'Gợi ý bằng AI'}</button></div></div>}{sections.map((section) => <PlanTextField key={section.key} section={section} content={content} setContent={setContent} />)}<ActivitiesEditor activities={content.activities} blocks={lessonBlocks} onChange={(activities) => setContent((current) => ({ ...current, activities }))} /><button className="primary-button" disabled={isSaving || isLoadingLessonContent || isGeneratingAi} type="submit"><Save size={16} />{isSaving ? 'Đang tạo...' : 'Lưu KHBD'}</button></form> : <><div className="editor-toolbar"><input value={title} onChange={(event) => setTitle(event.target.value)} /><div><button className="secondary-button" type="button" onClick={() => void handleSave()} disabled={isSaving}><Save size={16} /> Lưu</button><button className="delete-button" type="button" onClick={() => void handleDelete()} aria-label="Xóa KHBD"><Trash2 size={16} /></button></div></div>{sections.map((section) => <PlanTextField key={section.key} section={section} content={content} setContent={setContent} />)}<ActivitiesEditor activities={content.activities} blocks={lessonBlocks} onChange={(activities) => setContent((current) => ({ ...current, activities }))} /></>}</>)}
       </div>
     </div>
   </section>

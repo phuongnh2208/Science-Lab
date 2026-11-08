@@ -72,23 +72,7 @@ export async function createClassProfile(teacherId: string, input: {
     equipment: input.equipment,
     notes: input.notes.trim() || null,
   })
-  if (!error) return null
-  if (!error.message.includes("Could not find the 'equipment' column")) {
-    return `Không thể tạo hồ sơ lớp: ${error.message}`
-  }
-  const legacyResult = await supabase.from('class_profiles').insert({
-    teacher_id: teacherId,
-    name: input.name.trim(),
-    grade_id: input.gradeId || null,
-    school_name: input.schoolName.trim() || null,
-    student_count: input.studentCount ? Number(input.studentCount) : null,
-    internet_available: input.internetAvailable,
-    projector_available: input.projectorAvailable,
-    notes: input.notes.trim() || null,
-  })
-  return legacyResult.error
-    ? `Không thể tạo hồ sơ lớp: ${legacyResult.error.message}`
-    : null
+  return error ? `Không thể tạo hồ sơ lớp: ${error.message}` : null
 }
 
 export async function deleteClassProfile(id: string) {
@@ -122,13 +106,5 @@ export async function updateClassProfile(id: string, input: {
     notes: input.notes.trim() || null,
   }).eq('id', id)
 
-  if (!error) return null
-  if (!error.message.includes("Could not find the 'equipment' column")) {
-    return `Không thể cập nhật hồ sơ lớp: ${error.message}`
-  }
-
-  const legacyResult = await supabase.from('class_profiles').update(baseFields).eq('id', id)
-  return legacyResult.error
-    ? `Không thể cập nhật hồ sơ lớp: ${legacyResult.error.message}`
-    : null
+  return error ? `Không thể cập nhật hồ sơ lớp: ${error.message}` : null
 }

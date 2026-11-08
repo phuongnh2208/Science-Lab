@@ -969,6 +969,20 @@
   gap: 24px;
 }
 
+.class-layout.list-only .class-list {
+  grid-column: 1 / -1;
+}
+
+.class-form-overlay {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, .38);
+}
+
 .class-form,
 .class-card {
   border: 1px solid #d9e7ee;
@@ -980,6 +994,9 @@
   display: grid;
   gap: 13px;
   align-content: start;
+  width: min(100%, 560px);
+  max-height: min(90vh, 760px);
+  overflow-y: auto;
   padding: 20px;
 }
 
@@ -1070,9 +1087,46 @@
 
 .class-card {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   gap: 15px;
   padding: 18px;
+  cursor: pointer;
+}
+
+.class-card-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.class-card.is-selected {
+  border-color: var(--ui-border-hover) !important;
+  background: var(--ui-primary-subtle);
+}
+
+.class-card-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ui-border);
+  color: var(--ui-text-secondary);
+  font-size: 13px;
+}
+
+.class-card-details div {
+  display: grid;
+  gap: 4px;
+}
+
+.class-card-details strong {
+  color: var(--ui-text);
+  font-size: 12px;
+}
+
+.class-card-detail-wide {
+  grid-column: 1 / -1;
 }
 
 .class-card-actions {
@@ -2472,7 +2526,9 @@ textarea,
   width: fit-content;
   margin-top: 6px;
   padding: 7px 0;
-  border: 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
   color: var(--color-primary-dark);
   background: transparent;
   cursor: pointer;
@@ -4223,6 +4279,10 @@ optgroup {
   margin-bottom: 24px;
 }
 
+.admin-selection-flow {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .admin-selection-flow .selection-step {
   min-height: 128px;
   padding: 20px;
@@ -4309,6 +4369,10 @@ optgroup {
 
   .admin-page .editor-actions {
     justify-content: flex-start;
+  }
+
+  .admin-selection-flow {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -4466,6 +4530,25 @@ optgroup {
   background: var(--ui-primary-light);
 }
 
+.login-page .login-switch,
+.login-page .login-home-link {
+  min-height: auto;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0;
+  box-shadow: none !important;
+  color: var(--ui-primary-hover);
+  background: transparent;
+}
+
+.login-page .login-switch:hover,
+.login-page .login-home-link:hover {
+  border: 0 !important;
+  color: var(--ui-primary);
+  background: transparent;
+  text-decoration: underline;
+}
+
 /* Flatten linked lesson resources so previews do not appear inside nested cards. */
 .plan-preview-activity {
   padding: 18px;
@@ -4479,6 +4562,32 @@ optgroup {
   border-left: 2px solid var(--ui-primary);
   border-radius: 0;
   background: transparent;
+}
+
+.login-resend {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 4px 0 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--ui-control-border);
+  border-radius: var(--ui-radius-sm);
+  background: var(--ui-surface);
+  color: var(--ui-primary);
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.login-resend:hover:not(:disabled) {
+  border-color: var(--ui-primary);
+  background: var(--ui-primary-light);
+}
+
+.login-resend:disabled {
+  cursor: not-allowed;
+  opacity: .65;
 }
 
 .linked-block {
