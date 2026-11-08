@@ -72,12 +72,56 @@ Deno.serve(async (request) => {
   }
 
   const prompt = `Bạn là chuyên gia thiết kế KHBD môn Khoa học tự nhiên/Vật lí tại Việt Nam.
-Hãy xây dựng gợi ý kế hoạch bài dạy theo ${payload.planType === 'STEM' ? 'định hướng STEM' : 'Công văn 5512'}.
+Hãy xây dựng gợi ý kế hoạch bài dạy theo ${payload.planType === 'STEM' ? 'định hướng STEM' : 'Công văn 5512 chuẩn'}.
 Chỉ sử dụng thông tin có trong bài học, block và hồ sơ lớp. Không bịa URL, số liệu hoặc thiết bị.
-Sắp xếp block thành các hoạt động có mục tiêu, nội dung, sản phẩm và tổ chức thực hiện.
 Trả về duy nhất JSON theo đúng cấu trúc:
-{"objectives":"...","equipment":"...","assessment":"...","activities":[{"title":"...","objective":"...","content":"...","product":"...","organization":"...","blockIds":["id"]}]}
-Mỗi hoạt động phải có blockIds là ID block được dùng. Có thể gộp nhiều block vào một hoạt động. Không bỏ qua block hữu ích.
+{
+  "objectives": "1. Kiến thức\\n- ...\\n2. Phát triển năng lực\\n- Năng lực chung:\\n...\\n- Năng lực vật lí / KHTN:\\n...\\n3. Phát triển phẩm chất\\n...",
+  "equipment": "1. Đối với giáo viên:\\n- SGK, SGV, Giáo án.\\n- ...\\n2. Đối với học sinh:\\n- SGK, tranh ảnh, tư liệu sưu tầm liên quan đến bài học và dụng cụ học tập theo yêu cầu của GV.",
+  "assessment": "...",
+  "activities": [
+    {
+      "title": "A. HOẠT ĐỘNG KHỞI ĐỘNG",
+      "objective": "...",
+      "content": "...",
+      "product": "...",
+      "organization": "Bước 1: GV chuyển giao nhiệm vụ học tập\\n- ...\\nBước 2: HS thực hiện nhiệm vụ học tập\\n- ...\\nBước 3: Báo cáo kết quả hoạt động và thảo luận\\n- ...\\nBước 4: Đánh giá kết quả, thực hiện nhiệm vụ học tập\\n- ...",
+      "expectedProduct": "",
+      "blockIds": ["id"]
+    },
+    {
+      "title": "B. HOẠT ĐỘNG HÌNH THÀNH KIẾN THỨC\\nHoạt động 1. ...",
+      "objective": "...",
+      "content": "...",
+      "product": "...",
+      "organization": "Bước 1: GV chuyển giao nhiệm vụ học tập\\n...\\nBước 2: HS thực hiện nhiệm vụ học tập\\n...\\nBước 3: Báo cáo kết quả hoạt động và thảo luận\\n...\\nBước 4: Đánh giá kết quả, thực hiện nhiệm vụ học tập\\n...",
+      "expectedProduct": "I. ...\\nPhiếu đáp án / Kết luận kiến thức trọng tâm HS ghi vở...",
+      "blockIds": ["id"]
+    },
+    {
+      "title": "C. HOẠT ĐỘNG LUYỆN TẬP",
+      "objective": "...",
+      "content": "...",
+      "product": "...",
+      "organization": "Bước 1: GV chuyển giao nhiệm vụ học tập\\n...\\nBước 2: HS thực hiện nhiệm vụ học tập\\n...\\nBước 3: HS báo cáo kết quả hoạt động và thảo luận\\n...\\nBước 4: GV đánh giá kết quả, thực hiện nhiệm vụ học tập",
+      "expectedProduct": "",
+      "blockIds": ["id"]
+    },
+    {
+      "title": "D. HOẠT ĐỘNG VẬN DỤNG",
+      "objective": "...",
+      "content": "...",
+      "product": "...",
+      "organization": "Bước 1: GV chuyển giao nhiệm vụ học tập\\n...\\nBước 2: HS tiếp nhận nhiệm vụ...\\nBước 3: HS báo cáo kết quả...\\nBước 4: GV tổng kết lại bài học...",
+      "expectedProduct": "",
+      "blockIds": ["id"]
+    }
+  ]
+}
+Lưu ý quan trọng:
+- Với các hoạt động thuộc "B. HOẠT ĐỘNG HÌNH THÀNH KIẾN THỨC", trường "organization" là cột "HOẠT ĐỘNG CỦA GV - HS" (gồm Bước 1, Bước 2, Bước 3, Bước 4) và trường "expectedProduct" là cột "DỰ KIẾN SẢN PHẨM" (kiến thức chốt, phiếu đáp án, kết luận ghi vở). Có thể tách thành nhiều hoạt động nhỏ trong phần B (Hoạt động 1, Hoạt động 2...).
+- Không đưa đường dẫn lưu trữ file nội bộ (như uuid/file.docx) vào nội dung, chỉ ghi tên phiếu học tập hoặc tên học liệu.
+- Mỗi hoạt động phải có blockIds là ID block được dùng.
 
 Dữ liệu bài học:
 ${JSON.stringify(payload.lesson)}

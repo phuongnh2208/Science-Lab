@@ -24,6 +24,7 @@ export type LessonPlanActivity = {
   content: string
   product: string
   organization: string
+  expectedProduct?: string
   blockIds: string[]
 }
 
@@ -38,10 +39,10 @@ const emptyPlanContent: PlanContent = {
   objectives: '',
   equipment: '',
   activities: [
-    { id: crypto.randomUUID(), title: 'Hoạt động 1. Khởi động', objective: '', content: '', product: '', organization: '', blockIds: [] },
-    { id: crypto.randomUUID(), title: 'Hoạt động 2. Hình thành kiến thức', objective: '', content: '', product: '', organization: '', blockIds: [] },
-    { id: crypto.randomUUID(), title: 'Hoạt động 3. Luyện tập', objective: '', content: '', product: '', organization: '', blockIds: [] },
-    { id: crypto.randomUUID(), title: 'Hoạt động 4. Vận dụng', objective: '', content: '', product: '', organization: '', blockIds: [] },
+    { id: crypto.randomUUID(), title: 'A. HOẠT ĐỘNG KHỞI ĐỘNG', objective: '', content: '', product: '', organization: '', expectedProduct: '', blockIds: [] },
+    { id: crypto.randomUUID(), title: 'B. HOẠT ĐỘNG HÌNH THÀNH KIẾN THỨC - Hoạt động 1', objective: '', content: '', product: '', organization: '', expectedProduct: '', blockIds: [] },
+    { id: crypto.randomUUID(), title: 'C. HOẠT ĐỘNG LUYỆN TẬP', objective: '', content: '', product: '', organization: '', expectedProduct: '', blockIds: [] },
+    { id: crypto.randomUUID(), title: 'D. HOẠT ĐỘNG VẬN DỤNG', objective: '', content: '', product: '', organization: '', expectedProduct: '', blockIds: [] },
   ],
   assessment: '',
 }
@@ -60,6 +61,7 @@ function normalizePlanContent(value: unknown): PlanContent {
         content: typeof activity?.content === 'string' ? activity.content : '',
         product: typeof activity?.product === 'string' ? activity.product : '',
         organization: typeof activity?.organization === 'string' ? activity.organization : '',
+        expectedProduct: typeof activity?.expectedProduct === 'string' ? activity.expectedProduct : '',
         blockIds: Array.isArray(activity?.blockIds) ? activity.blockIds.filter((id): id is string => typeof id === 'string') : [],
       }))
       : [...emptyPlanContent.activities],
