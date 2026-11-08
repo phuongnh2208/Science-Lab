@@ -1,0 +1,2674 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Lab - PHYS HNUE | Hỗ trợ GV KHTN & Vật lí xây dựng bài giảng có thí nghiệm</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Merriweather for mathematical/scientific symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=STIX+Two+Math&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        math: ['STIX Two Math', 'Cambria Math', 'Times New Roman', 'serif']
+                    },
+                    colors: {
+                        hnue: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#172554'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom styles for scientific typography & sketch fidelity */
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Dark Mode Global Adaptations */
+        html.dark body {
+            background-color: #0b1120;
+            color: #f1f5f9;
+        }
+        html.dark .bg-white {
+            background-color: #1e293b !important;
+        }
+        html.dark .bg-slate-50,
+        html.dark .bg-slate-50\/60,
+        html.dark .bg-blue-50\/70,
+        html.dark .bg-hnue-50\/70,
+        html.dark .bg-hnue-50 {
+            background-color: #0f172a !important;
+        }
+        html.dark .border-slate-200,
+        html.dark .border-slate-300,
+        html.dark .border-blue-200 {
+            border-color: #334155 !important;
+        }
+        html.dark .text-slate-900,
+        html.dark .text-slate-800,
+        html.dark .text-hnue-900 {
+            color: #f8fafc !important;
+        }
+        html.dark .text-slate-700,
+        html.dark .text-slate-600 {
+            color: #cbd5e1 !important;
+        }
+        html.dark .text-slate-500 {
+            color: #94a3b8 !important;
+        }
+        html.dark select,
+        html.dark input[type="text"],
+        html.dark input[type="number"],
+        html.dark input[type="email"],
+        html.dark input[type="password"],
+        html.dark textarea {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            border-color: #475569 !important;
+        }
+
+        /* Proper Physics Variable Formatting (Fixes the $s, $t bug from Gemini output) */
+        .phys-var {
+            font-family: 'STIX Two Math', 'Times New Roman', serif;
+            font-style: italic;
+            font-weight: 600;
+            color: #1e3a8a;
+            padding: 0 2px;
+        }
+        html.dark .phys-var {
+            color: #93c5fd;
+        }
+
+        .phys-formula {
+            font-family: 'STIX Two Math', 'Times New Roman', serif;
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 2px 8px;
+            display: inline-block;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        html.dark .phys-formula {
+            background-color: #334155;
+            border-color: #475569;
+            color: #f8fafc;
+        }
+
+        /* Hand-drawn inspired wavy accent under Science Lab title */
+        .wavy-underline {
+            background-image: url("data:image/svg+xml,%3Csvg width='120' height='8' viewBox='0 0 120 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 5.5C15 1.5 28 7.5 42 4.5C56 1.5 68 7.5 82 4.5C96 1.5 108 6.5 118 3.5' stroke='%232563EB' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left bottom;
+            background-size: 140px 8px;
+            padding-bottom: 6px;
+        }
+
+        /* Smooth custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-hnue-100 selection:text-hnue-900">
+
+    <!-- ================================================================= -->
+    <!-- 1. HEADER (Logo PHYS HNUE + Science Lab + Menu Hồ sơ User góc phải) -->
+    <!-- ================================================================= -->
+    <header class="bg-white border-b-2 border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Left: Logo PHYS HNUE + Science Lab Title -->
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-xl border-2 border-hnue-600 bg-hnue-50 flex flex-col items-center justify-center shadow-sm shrink-0 select-none">
+                    <span class="text-xs font-extrabold tracking-wider text-hnue-700 leading-tight">PHYS</span>
+                    <span class="w-8 h-[1.5px] bg-hnue-300 my-0.5"></span>
+                    <span class="text-[11px] font-bold tracking-tight text-hnue-900 leading-tight">HNUE</span>
+                </div>
+
+                <div>
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight wavy-underline">
+                            Science Lab
+                        </h1>
+                    </div>
+                    <p id="uiHeaderSubtitle" class="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
+                        Web hỗ trợ giáo viên KHTN và Vật lí xây dựng bài giảng có thí nghiệm
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: User Profile Icon with Dropdown Menu (Auth, VI/EN, Dark Mode) -->
+            <div class="relative" id="userMenuWrapper">
+                <button type="button" onclick="toggleUserDropdown(event)" class="flex items-center gap-2.5 pl-2 pr-3.5 py-1.5 rounded-full border-2 border-slate-200 hover:border-hnue-500 bg-white transition-all group shadow-xs">
+                    <div id="headerUserAvatar" class="w-9 h-9 rounded-full bg-hnue-700 text-white flex items-center justify-center font-bold text-sm">
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+                    <div class="hidden sm:block text-left">
+                        <div id="headerUserName" class="text-xs font-bold text-slate-800 group-hover:text-hnue-600 leading-none">GV. Khoa Vật lí</div>
+                        <div id="headerUserStatus" class="text-[10px] text-emerald-600 font-semibold mt-0.5">● Đã đăng nhập</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1"></i>
+                </button>
+
+                <!-- Dropdown Popover khi ấn vào Hồ sơ (User) -->
+                <div id="userDropdownMenu" class="hidden absolute right-0 mt-2.5 w-72 rounded-2xl bg-white border-2 border-slate-200 shadow-xl py-3 px-4 z-50 space-y-3.5">
+                    
+                    <!-- Thông tin tài khoản hiện tại -->
+                    <div class="border-b border-slate-200 pb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-hnue-100 text-hnue-800 flex items-center justify-center font-extrabold text-sm">
+                                <i class="fa-solid fa-user-check"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div id="menuAccountName" class="text-sm font-extrabold text-slate-900 truncate">GV. Khoa Vật lí</div>
+                                <div id="menuAccountEmail" class="text-xs text-slate-500 truncate">gv.vatli@hnue.edu.vn</div>
+                            </div>
+                        </div>
+
+                        <!-- Các nút Đăng nhập / Đăng ký / Đăng xuất -->
+                        <div class="grid grid-cols-3 gap-1.5 mt-3">
+                            <button type="button" onclick="openAuthModal('login')" class="px-2 py-1.5 rounded-lg border border-slate-300 hover:border-hnue-500 text-xs font-bold text-slate-700 hover:text-hnue-700 transition text-center">
+                                <span data-i18n="loginBtn">Đăng nhập</span>
+                            </button>
+                            <button type="button" onclick="openAuthModal('register')" class="px-2 py-1.5 rounded-lg border border-slate-300 hover:border-hnue-500 text-xs font-bold text-slate-700 hover:text-hnue-700 transition text-center">
+                                <span data-i18n="registerBtn">Đăng ký</span>
+                            </button>
+                            <button type="button" onclick="handleLogout()" class="px-2 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition text-center">
+                                <span data-i18n="logoutBtn">Đăng xuất</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lựa chọn xem bằng Tiếng Việt / Tiếng Anh -->
+                    <div class="space-y-1.5">
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+                            <span data-i18n="langLabel">Ngôn ngữ / Language</span>
+                            <i class="fa-solid fa-earth-asia text-slate-400"></i>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200">
+                            <button type="button" id="langBtnVI" onclick="setLanguageMode('VI')" class="py-1.5 px-2 rounded-lg bg-white text-hnue-800 font-bold text-xs shadow-xs transition-all">
+                                🇻🇳 Tiếng Việt
+                            </button>
+                            <button type="button" id="langBtnEN" onclick="setLanguageMode('EN')" class="py-1.5 px-2 rounded-lg text-slate-600 font-bold text-xs hover:text-slate-900 transition-all">
+                                🇬🇧 English
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lựa chọn xem Dark Mode -->
+                    <div class="pt-1 border-t border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-amber-400">
+                                <i id="darkModeIcon" class="fa-solid fa-moon text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-slate-900" data-i18n="darkModeTitle">Giao diện tối</div>
+                                <div class="text-[11px] text-slate-500" data-i18n="darkModeSub">Dark Mode</div>
+                            </div>
+                        </div>
+
+                        <button type="button" id="darkModeSwitch" onclick="toggleDarkMode()" role="switch" aria-checked="false" class="w-11 h-6 bg-slate-300 rounded-full relative transition-colors duration-200 focus:outline-none p-0.5">
+                            <span id="darkModeKnob" class="block w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 translate-x-0"></span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================================================================= -->
+    <!-- 2. MAIN WORKSPACE (Sidebar 3 mục ngang hàng + Khung chính bên phải) -->
+    <!-- ================================================================= -->
+    <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- LEFT SIDEBAR: 3 mục ngang cấp (Soạn mới | Kho KHBD | Hồ sơ lớp) - Đã bỏ hộp Thế mạnh khoa -->
+        <aside class="lg:col-span-3 bg-white rounded-2xl border-2 border-slate-200 p-4 shadow-sm lg:sticky lg:top-24">
+            <nav class="space-y-2" aria-label="Menu chính">
+                <!-- Mục 1: Soạn mới -->
+                <button id="navCreateBtn" onclick="switchMainTab('create')" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl font-bold text-left transition-all bg-hnue-700 text-white shadow-sm">
+                    <span class="flex items-center gap-3 text-base">
+                        <i class="fa-solid fa-pen-ruler"></i>
+                        <span data-i18n="navCreate">Soạn mới</span>
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs opacity-80"></i>
+                </button>
+
+                <!-- Đường kẻ ngang phân cách đúng bản vẽ -->
+                <div class="border-b-2 border-slate-200 my-2"></div>
+
+                <!-- Mục 2: Kho KHBD -->
+                <button id="navRepoBtn" onclick="switchMainTab('repo')" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl font-bold text-left text-slate-700 hover:bg-slate-100 transition-all">
+                    <span class="flex items-center gap-3 text-base">
+                        <i class="fa-solid fa-folder-open text-hnue-600"></i>
+                        <span data-i18n="navRepo">Kho KHBD</span>
+                    </span>
+                    <span id="repoCountBadge" class="px-2.5 py-0.5 text-xs font-extrabold rounded-full bg-hnue-100 text-hnue-800">
+                        3
+                    </span>
+                </button>
+
+                <!-- Đường kẻ ngang phân cách thứ 2 -->
+                <div class="border-b-2 border-slate-200 my-2"></div>
+
+                <!-- Mục 3: Hồ sơ lớp (Đưa lên ngang hàng với Soạn mới và Kho KHBD) -->
+                <button id="navClassBtn" onclick="switchMainTab('classes')" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl font-bold text-left text-slate-700 hover:bg-slate-100 transition-all">
+                    <span class="flex items-center gap-3 text-base">
+                        <i class="fa-solid fa-users-rectangle text-emerald-600"></i>
+                        <span data-i18n="navClasses">Hồ sơ lớp</span>
+                    </span>
+                    <span id="classCountBadge" class="px-2.5 py-0.5 text-xs font-extrabold rounded-full bg-emerald-100 text-emerald-800">
+                        4
+                    </span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- ================================================================= -->
+        <!-- 3. RIGHT CONTENT AREA: SOẠN MỚI | KHO KHBD | HỒ SƠ LỚP            -->
+        <!-- ================================================================= -->
+        <main class="lg:col-span-9 space-y-6">
+
+            <!-- ======================= TAB 1: SOẠN MỚI ======================= -->
+            <section id="viewCreate" class="space-y-6">
+                
+                <!-- KHUNG THIẾT LẬP BÀI DẠY (Bám sát bản vẽ tay) -->
+                <div class="bg-white rounded-2xl border-2 border-slate-200 p-5 sm:p-7 shadow-sm space-y-6">
+                    
+                    <!-- DÒNG 1: LỚP ..... (Chỉ hiển thị tên lớp ngắn gọn, kèm nút Sửa/Thêm & thanh tóm tắt hồ sơ lớp) -->
+                    <div class="space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                            <label for="classSelect" class="text-base sm:text-lg font-extrabold text-slate-900 min-w-[100px] flex items-center gap-2">
+                                <span data-i18n="labelClass">Lớp</span>
+                                <span class="text-slate-400 font-normal tracking-widest hidden sm:inline">.....</span>
+                            </label>
+                            
+                            <div class="flex-1 flex flex-wrap items-center gap-2.5">
+                                <!-- Dropdown ngắn gọn chỉ hiện Tên lớp + Sĩ số (VD: Lớp 8A1 (40 HS)) -->
+                                <select id="classSelect" onchange="onClassChange()" class="w-full sm:w-64 rounded-xl border-2 border-slate-300 bg-white px-4 py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:border-hnue-600 focus:outline-none transition-colors">
+                                    <!-- Populated by JS -->
+                                </select>
+
+                                <!-- Nút sửa nhanh lớp đang chọn -->
+                                <button type="button" onclick="openClassModalForEdit(currentState.selectedClassId)" class="px-3.5 py-2.5 rounded-xl border-2 border-slate-200 hover:border-hnue-500 bg-white text-xs sm:text-sm font-bold text-slate-700 hover:text-hnue-700 flex items-center gap-1.5 transition shadow-2xs">
+                                    <i class="fa-regular fa-pen-to-square text-hnue-600"></i>
+                                    <span data-i18n="editCurrentClassBtn">Chỉnh sửa hồ sơ lớp</span>
+                                </button>
+
+                                <!-- Nút thêm lớp mới -->
+                                <button type="button" onclick="openClassModalForAdd()" class="px-3.5 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-200 text-xs sm:text-sm font-bold text-emerald-800 flex items-center gap-1.5 transition">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span data-i18n="addNewClassBtn">Thêm lớp</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Thanh tóm tắt gọn (Summary Strip) hiển thị Thiết bị đã tick, Nhu cầu đặc biệt & Lưu ý của lớp -->
+                        <div id="classProfileSummary" class="sm:ml-[112px] bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-700 space-y-2">
+                            <!-- Updated dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- DÒNG 2: KHỐI LỚP [ v ]   &   SGK [ v ] (Nằm ngang trên cùng 1 hàng như bản vẽ) -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                        <!-- Khối lớp -->
+                        <div class="md:col-span-7 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                            <label for="gradeSelect" class="text-base sm:text-lg font-extrabold text-slate-900 min-w-[100px]" data-i18n="labelGrade">
+                                Khối lớp
+                            </label>
+                            <select id="gradeSelect" onchange="onGradeChange()" class="flex-1 rounded-xl border-2 border-slate-300 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:border-hnue-600 focus:outline-none">
+                                <option value="ALL">Tất cả 10 bài mẫu trọng tâm (KHTN & Vật lí)</option>
+                                <option value="KHTN 6">KHTN 6 (THCS)</option>
+                                <option value="KHTN 7">KHTN 7 (THCS)</option>
+                                <option value="KHTN 8" selected>KHTN 8 (THCS - Trọng tâm)</option>
+                                <option value="KHTN 9">KHTN 9 (THCS - Trọng tâm)</option>
+                                <option value="Vật lí 10">Vật lí 10 (THPT)</option>
+                                <option value="Vật lí 11">Vật lí 11 (THPT)</option>
+                                <option value="Vật lí 12">Vật lí 12 (THPT)</option>
+                            </select>
+                        </div>
+
+                        <!-- SGK -->
+                        <div class="md:col-span-5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                            <label for="bookSelect" class="text-base sm:text-lg font-extrabold text-slate-900 sm:min-w-[55px]" data-i18n="labelBook">
+                                SGK
+                            </label>
+                            <select id="bookSelect" onchange="onLessonChange()" class="flex-1 rounded-xl border-2 border-slate-300 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:border-hnue-600 focus:outline-none">
+                                <option value="Kết nối tri thức với cuộc sống" selected>Kết nối tri thức</option>
+                                <option value="Chân trời sáng tạo">Chân trời sáng tạo</option>
+                                <option value="Cánh diều">Cánh diều</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- DÒNG 3: BÀI [                  v ] -->
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                        <label for="lessonSelect" class="text-base sm:text-lg font-extrabold text-slate-900 min-w-[100px]" data-i18n="labelLesson">
+                            Bài
+                        </label>
+                        <select id="lessonSelect" onchange="onLessonChange()" class="flex-1 rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm sm:text-base font-bold text-hnue-900 focus:border-hnue-600 focus:outline-none shadow-sm">
+                            <!-- Populated dynamically by JS -->
+                        </select>
+                    </div>
+
+                    <!-- DÒNG 4: 2 KHUNG LỰA CHỌN MẪU SOẠN BÀI (Soạn theo CV 5512 | Soạn theo Chủ đề STEM) -->
+                    <div class="pt-1">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Box 1: Soạn theo CV 5512 -->
+                            <button type="button" id="tplBtn5512" onclick="selectTemplate('5512')" class="relative p-5 rounded-2xl border-2 border-hnue-600 bg-hnue-50/70 text-left transition-all flex items-start justify-between gap-3 shadow-sm">
+                                <div>
+                                    <div class="text-base sm:text-lg font-extrabold text-hnue-900" data-i18n="tpl5512Title">
+                                        Soạn theo CV 5512
+                                    </div>
+                                    <p class="text-xs text-slate-600 mt-1 font-medium leading-relaxed" data-i18n="tpl5512Desc">
+                                        Chuẩn 4 hoạt động của Bộ GD&ĐT (Mở đầu, Hình thành kiến thức qua TN, Luyện tập, Vận dụng).
+                                    </p>
+                                </div>
+                                <span id="tplCheck5512" class="w-6 h-6 rounded-full bg-hnue-600 text-white flex items-center justify-center text-xs shrink-0">
+                                    <i class="fa-solid fa-check"></i>
+                                </span>
+                            </button>
+
+                            <!-- Box 2: Soạn theo Chủ đề STEM -->
+                            <button type="button" id="tplBtnSTEM" onclick="selectTemplate('STEM')" class="relative p-5 rounded-2xl border-2 border-slate-300 bg-white hover:border-slate-400 text-left transition-all flex items-start justify-between gap-3">
+                                <div>
+                                    <div class="text-base sm:text-lg font-extrabold text-slate-800" data-i18n="tplStemTitle">
+                                        Soạn theo Chủ đề STEM
+                                    </div>
+                                    <p class="text-xs text-slate-600 mt-1 font-medium leading-relaxed" data-i18n="tplStemDesc">
+                                        Chuỗi 5 hoạt động thiết kế kỹ thuật hoặc kịch bản CLB STEM ngoại khóa gắn với chế tạo sản phẩm.
+                                    </p>
+                                </div>
+                                <span id="tplCheckSTEM" class="w-6 h-6 rounded-full border-2 border-slate-300 text-transparent flex items-center justify-center text-xs shrink-0">
+                                    <i class="fa-solid fa-check"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- DÒNG 5: GỢI Ý HỌC LIỆU (Lưới 2x2 Checkbox đúng bản vẽ) -->
+                    <div class="pt-2 border-t border-slate-200 space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                                <span data-i18n="materialsHeading">Gợi ý học liệu</span>
+                            </h2>
+                            <span class="text-xs text-slate-500 font-medium" data-i18n="materialsSub">
+                                Tích chọn các học liệu muốn đưa vào bài giảng & Phiếu học tập
+                            </span>
+                        </div>
+
+                        <!-- Lưới 2x2 Checkbox đúng thứ tự trong ảnh vẽ tay -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <!-- 1. Bộ thí nghiệm -->
+                            <label class="flex items-start gap-3.5 p-3.5 rounded-xl border-2 border-slate-200 hover:border-hnue-500 bg-slate-50/60 cursor-pointer transition-all select-none">
+                                <input type="checkbox" id="chkKit" checked onchange="updateMaterialPreview()" class="mt-1 w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600">
+                                <div class="flex-1">
+                                    <div class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                                        <span data-i18n="chkKitLabel">Bộ thí nghiệm</span>
+                                        <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold">+ Phiếu HT</span>
+                                    </div>
+                                    <p id="chkKitSub" class="text-xs text-slate-600 mt-0.5 line-clamp-1">
+                                        Dụng cụ thí nghiệm thực tế & hướng dẫn lắp đặt
+                                    </p>
+                                </div>
+                            </label>
+
+                            <!-- 2. Mô phỏng -->
+                            <label class="flex items-start gap-3.5 p-3.5 rounded-xl border-2 border-slate-200 hover:border-hnue-500 bg-slate-50/60 cursor-pointer transition-all select-none">
+                                <input type="checkbox" id="chkSim" checked onchange="updateMaterialPreview()" class="mt-1 w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600">
+                                <div class="flex-1">
+                                    <div class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                                        <span data-i18n="chkSimLabel">Mô phỏng</span>
+                                        <span class="text-[11px] px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-semibold">PhET / Coach 7</span>
+                                    </div>
+                                    <p id="chkSimSub" class="text-xs text-slate-600 mt-0.5 line-clamp-1">
+                                        Link mô phỏng tương tác kèm mẫu Phiếu học tập số
+                                    </p>
+                                </div>
+                            </label>
+
+                            <!-- 3. Video -->
+                            <label class="flex items-start gap-3.5 p-3.5 rounded-xl border-2 border-slate-200 hover:border-hnue-500 bg-slate-50/60 cursor-pointer transition-all select-none">
+                                <input type="checkbox" id="chkVideo" checked onchange="updateMaterialPreview()" class="mt-1 w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600">
+                                <div class="flex-1">
+                                    <div class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                                        <span data-i18n="chkVideoLabel">Video</span>
+                                        <span class="text-[11px] px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold">Hướng dẫn & Hiện tượng</span>
+                                    </div>
+                                    <p id="chkVideoSub" class="text-xs text-slate-600 mt-0.5 line-clamp-1">
+                                        Video hướng dẫn tiến hành TN & hiện tượng thực tế
+                                    </p>
+                                </div>
+                            </label>
+
+                            <!-- 4. Hình ảnh -->
+                            <label class="flex items-start gap-3.5 p-3.5 rounded-xl border-2 border-slate-200 hover:border-hnue-500 bg-slate-50/60 cursor-pointer transition-all select-none">
+                                <input type="checkbox" id="chkImage" checked onchange="updateMaterialPreview()" class="mt-1 w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600">
+                                <div class="flex-1">
+                                    <div class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                                        <span data-i18n="chkImageLabel">Hình ảnh</span>
+                                        <span class="text-[11px] px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-semibold">Sơ đồ & Bảng biểu</span>
+                                    </div>
+                                    <p id="chkImageSub" class="text-xs text-slate-600 mt-0.5 line-clamp-1">
+                                        Sơ đồ bố trí thí nghiệm & mẫu phiếu đánh giá HS
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- KHUNG CHI TIẾT HỌC LIỆU ĐỀ XUẤT CHO BÀI ĐANG CHỌN -->
+                        <div id="recommendedMaterialsBox" class="bg-slate-50 rounded-2xl border border-slate-200 p-4 space-y-3">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- DÒNG 6: GHI CHÚ BỔ SUNG & NÚT TẠO KHBD -->
+                    <div class="pt-2 border-t border-slate-200 space-y-4">
+                        <div>
+                            <label for="customNoteInput" class="block text-xs font-bold text-slate-700 mb-1.5" data-i18n="customNoteLabel">
+                                Ghi chú điều chỉnh theo tình hình thực tế lớp học (Tùy chọn):
+                            </label>
+                            <input id="customNoteInput" type="text" placeholder="VD: Lớp chỉ có 1 bộ thí nghiệm biểu diễn, ưu tiên kết hợp mô phỏng PhET trên màn chiếu..." class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-800 focus:border-hnue-600 focus:outline-none">
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-1">
+                            <button type="button" id="generateBtn" onclick="triggerGenerateKHBD()" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-gradient-to-r from-hnue-700 to-hnue-600 hover:from-hnue-800 hover:to-hnue-700 text-white font-extrabold text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-lg"></i>
+                                <span data-i18n="generateBtnText">Đề xuất & Tạo Kế hoạch bài dạy</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TRẠNG THÁI LOADING TẠI CHỖ (Ngay bên dưới nút bấm, không nhảy lên đầu trang) -->
+                <div id="inlineLoadingBox" class="hidden bg-white rounded-2xl border-2 border-hnue-200 p-6 shadow-sm space-y-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-hnue-50 text-hnue-600 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div id="loadingStepText" class="text-sm sm:text-base font-bold text-slate-900">
+                                Đang phân tích hồ sơ lớp và ghép bộ thí nghiệm vào Kế hoạch bài dạy...
+                            </div>
+                            <div class="text-xs text-slate-500 mt-0.5">
+                                Hệ thống đang thiết kế chuỗi hoạt động thực nghiệm, mẫu Phiếu học tập và chuẩn hóa ký hiệu vật lí.
+                            </div>
+                        </div>
+                        <span id="loadingPercent" class="text-sm font-extrabold text-hnue-700">35%</span>
+                    </div>
+
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div id="loadingBar" class="bg-hnue-600 h-full w-1/3 transition-all duration-300 rounded-full"></div>
+                    </div>
+                </div>
+
+                <!-- KẾT QUẢ KHBD, PHIẾU HỌC TẬP & MÔ PHỎNG TƯƠNG TÁC -->
+                <div id="resultContainer" class="bg-white rounded-2xl border-2 border-slate-200 shadow-sm overflow-hidden">
+                    
+                    <div class="bg-slate-50 border-b border-slate-200 px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-1.5 bg-slate-200/75 dark:bg-slate-800 p-1 rounded-xl">
+                            <button type="button" id="resTabKHBD" onclick="switchResultTab('khbd')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-white text-hnue-800 shadow-sm transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-lines"></i>
+                                <span data-i18n="tabLessonPlan">Kế hoạch bài dạy</span>
+                            </button>
+                            <button type="button" id="resTabWorksheet" onclick="switchResultTab('worksheet')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                                <span data-i18n="tabWorksheet">Phiếu học tập mẫu</span>
+                            </button>
+                            <button type="button" id="resTabSim" onclick="switchResultTab('sim')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span data-i18n="tabSimulation">Mô phỏng TN trực quan</span>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button type="button" onclick="saveCurrentToRepo()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all">
+                                <i class="fa-solid fa-bookmark"></i>
+                                <span data-i18n="saveRepoBtn">Lưu vào Kho KHBD</span>
+                            </button>
+                            <button type="button" onclick="copyCurrentOutput()" class="px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all">
+                                <i class="fa-regular fa-copy"></i>
+                                <span data-i18n="copyBtn">Sao chép</span>
+                            </button>
+                            <button type="button" onclick="exportToWord()" class="px-3 py-1.5 rounded-lg border border-hnue-600 bg-hnue-50 hover:bg-hnue-100 text-hnue-800 text-xs font-bold flex items-center gap-1.5 transition-all">
+                                <i class="fa-solid fa-file-word"></i>
+                                <span data-i18n="exportWordBtn">Xuất Word (.doc)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tab 1: Kế hoạch bài dạy -->
+                    <div id="panelKHBD" class="p-6 sm:p-8 space-y-6">
+                        <div class="flex items-center justify-between text-xs text-slate-500 bg-slate-50 px-3.5 py-2 rounded-lg border border-slate-200">
+                            <span><i class="fa-solid fa-pen-to-square text-hnue-600 mr-1"></i> Nhấp trực tiếp vào nội dung bên dưới để chỉnh sửa trước khi xuất file.</span>
+                            <span class="font-semibold text-emerald-600">✓ Đã chuẩn hóa ký hiệu Vật lí</span>
+                        </div>
+                        <div id="khbdDocumentContent" contenteditable="true" class="prose max-w-none text-slate-800 space-y-5 focus:outline-none focus:ring-2 focus:ring-hnue-200 rounded-xl p-2">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Mẫu Phiếu học tập -->
+                    <div id="panelWorksheet" class="hidden p-6 sm:p-8 space-y-6">
+                        <div class="flex items-center justify-between text-xs text-slate-500 bg-amber-50/70 px-3.5 py-2 rounded-lg border border-amber-200">
+                            <span><i class="fa-solid fa-lightbulb text-amber-600 mr-1"></i> Mẫu Phiếu học tập khớp với bộ thí nghiệm thực tế & mô phỏng đã chọn.</span>
+                            <button onclick="exportToWord('worksheet')" class="font-bold text-hnue-700 hover:underline">Tải riêng Phiếu HT (.doc)</button>
+                        </div>
+                        <div id="worksheetDocumentContent" contenteditable="true" class="prose max-w-none text-slate-800 space-y-5 focus:outline-none focus:ring-2 focus:ring-hnue-200 rounded-xl p-2">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Phòng Thí nghiệm Mô phỏng Trực quan -->
+                    <div id="panelSim" class="hidden p-6 sm:p-8 space-y-6">
+                        <div class="bg-slate-900 text-white rounded-2xl p-5 sm:p-6 space-y-5">
+                            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 pb-4">
+                                <div>
+                                    <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                                        Science Lab Interactive Simulation
+                                    </span>
+                                    <h3 id="interactiveSimTitle" class="text-lg font-extrabold mt-1">
+                                        Mô phỏng: Khảo sát Áp suất trên một bề mặt (p = F / S)
+                                    </h3>
+                                </div>
+                                <div id="externalSimLinks" class="flex items-center gap-2"></div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                                <div class="md:col-span-5 space-y-4 bg-slate-800/90 p-4 rounded-xl border border-slate-700">
+                                    <div>
+                                        <div class="flex justify-between text-xs font-semibold mb-1">
+                                            <span id="simSlider1Label">Áp lực tác dụng (F):</span>
+                                            <span id="simSlider1Val" class="text-amber-400 font-bold">20 N</span>
+                                        </div>
+                                        <input id="simSlider1" type="range" min="5" max="60" step="5" value="20" oninput="runInteractiveSim()" class="w-full accent-amber-400 cursor-pointer">
+                                    </div>
+
+                                    <div>
+                                        <div class="flex justify-between text-xs font-semibold mb-1">
+                                            <span id="simSlider2Label">Diện tích bị ép (S):</span>
+                                            <span id="simSlider2Val" class="text-emerald-400 font-bold">0.02 m²</span>
+                                        </div>
+                                        <input id="simSlider2" type="range" min="1" max="4" step="1" value="2" oninput="runInteractiveSim()" class="w-full accent-emerald-400 cursor-pointer">
+                                    </div>
+
+                                    <div class="pt-2 border-t border-slate-700 space-y-1.5 text-xs">
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-400">Kết quả:</span>
+                                            <span id="simComputedResult" class="font-extrabold text-sm text-cyan-300">p = 1000 Pa</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-400">Quan sát:</span>
+                                            <span id="simObservationText" class="font-semibold text-amber-200">Độ lún cát: 1.5 cm</span>
+                                        </div>
+                                    </div>
+
+                                    <button type="button" onclick="recordSimDataPoint()" class="w-full py-2 rounded-lg bg-hnue-600 hover:bg-hnue-500 text-white font-bold text-xs transition">
+                                        + Ghi số liệu vào Bảng kết quả
+                                    </button>
+                                </div>
+
+                                <div class="md:col-span-7 bg-slate-950 rounded-xl border border-slate-800 p-4 flex flex-col items-center justify-center min-h-[240px]">
+                                    <div id="simVisualCanvas" class="w-full flex items-center justify-center"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-800/60 rounded-xl p-3.5 border border-slate-700">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-slate-300">Bảng ghi số liệu thực nghiệm trực tiếp:</span>
+                                    <button onclick="clearSimDataPoints()" class="text-[11px] text-slate-400 hover:text-white">Xóa bảng</button>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-xs text-slate-200">
+                                        <thead class="text-slate-400 border-b border-slate-700">
+                                            <tr>
+                                                <th class="py-1.5 px-2">Lần đo</th>
+                                                <th class="py-1.5 px-2">Thông số 1</th>
+                                                <th class="py-1.5 px-2">Thông số 2</th>
+                                                <th class="py-1.5 px-2">Kết quả đo</th>
+                                                <th class="py-1.5 px-2">Nhận xét</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="simDataLogBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ======================= TAB 2: KHO KHBD ======================= -->
+            <section id="viewRepo" class="hidden space-y-6">
+                <div class="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-sm space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                        <div>
+                            <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2.5">
+                                <i class="fa-solid fa-folder-open text-hnue-600"></i>
+                                <span data-i18n="repoHeading">Kho Kế hoạch bài dạy đã lưu</span>
+                            </h2>
+                            <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+                                Quản lý các bài giảng có thí nghiệm đã soạn theo từng hồ sơ lớp học.
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <select id="repoFilterSelect" onchange="renderRepoList()" class="rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700">
+                                <option value="ALL">Tất cả mẫu (CV 5512 & STEM)</option>
+                                <option value="5512">Mẫu Công văn 5512</option>
+                                <option value="STEM">Mẫu Chủ đề STEM</option>
+                            </select>
+                            <button onclick="switchMainTab('create')" class="px-4 py-2 rounded-xl bg-hnue-700 text-white text-xs font-bold hover:bg-hnue-800 transition">
+                                + Soạn bài mới
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="repoListContainer" class="grid grid-cols-1 gap-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ======================= TAB 3: HỒ SƠ LỚP (MỚI) ======================= -->
+            <section id="viewClasses" class="hidden space-y-6">
+                <div class="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-sm space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                        <div>
+                            <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2.5">
+                                <i class="fa-solid fa-users-rectangle text-emerald-600"></i>
+                                <span data-i18n="classesHeading">Quản lý Hồ sơ lớp học</span>
+                            </h2>
+                            <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+                                Lưu danh sách nhiều lớp giảng dạy với đặc điểm học sinh và điều kiện thiết bị thí nghiệm riêng biệt.
+                            </p>
+                        </div>
+
+                        <button type="button" onclick="openClassModalForAdd()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold flex items-center gap-2 shadow-xs transition">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Thêm hồ sơ lớp mới</span>
+                        </button>
+                    </div>
+
+                    <!-- Lưới hiển thị các thẻ Hồ sơ lớp đầy đủ thông tin -->
+                    <div id="classCardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODALS: THÊM/SỬA HỒ SƠ LỚP & ĐĂNG NHẬP / ĐĂNG KÝ TÀI KHOẢN        -->
+    <!-- ================================================================= -->
+
+    <!-- Modal 1: Thêm / Chỉnh sửa Hồ sơ lớp (Tên, Sĩ số, Tickbox Thiết bị có sẵn, Nhu cầu đặc biệt, Lưu ý khác) -->
+    <div id="addClassModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl border-2 border-slate-200 max-w-2xl w-full p-6 shadow-xl space-y-5 my-8">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <h3 id="classModalTitle" class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-users-rectangle text-emerald-600"></i>
+                    <span>Chỉnh sửa Hồ sơ lớp học</span>
+                </h3>
+                <button type="button" onclick="toggleModal('addClassModal', false)" class="text-slate-400 hover:text-slate-700">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <input type="hidden" id="editingClassId" value="">
+
+            <div class="space-y-4 text-sm max-h-[72vh] overflow-y-auto pr-1">
+                <!-- 1. Tên lớp & 2. Sĩ số -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3.5">
+                    <div class="sm:col-span-8">
+                        <label for="newClassName" class="block text-xs font-extrabold text-slate-800 uppercase tracking-wide mb-1">
+                            1. Tên lớp *
+                        </label>
+                        <input id="newClassName" type="text" placeholder="VD: Lớp 8A1, Lớp 9A2..." class="w-full rounded-xl border-2 border-slate-300 px-3.5 py-2 font-bold text-slate-900 focus:border-hnue-600 focus:outline-none">
+                    </div>
+                    <div class="sm:col-span-4">
+                        <label for="newClassSize" class="block text-xs font-extrabold text-slate-800 uppercase tracking-wide mb-1">
+                            2. Sĩ số (Học sinh) *
+                        </label>
+                        <input id="newClassSize" type="number" min="1" max="100" value="40" class="w-full rounded-xl border-2 border-slate-300 px-3.5 py-2 font-bold text-slate-900 focus:border-hnue-600 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- 3. Thiết bị có sẵn (Tickbox / Checkbox Grid) -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-extrabold text-slate-800 uppercase tracking-wide">
+                            3. Thiết bị có sẵn tại lớp / phòng bộ môn (Tick chọn)
+                        </label>
+                        <span class="text-[11px] text-slate-500 font-medium">Tích chọn các thiết bị thực tế có thể sử dụng</span>
+                    </div>
+
+                    <div id="classEquipCheckboxGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-0.5">
+                        <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-hnue-500 bg-slate-50/70 cursor-pointer select-none">
+                            <input type="checkbox" name="classEquipItem" value="Máy chiếu / Tivi thông minh" class="mt-0.5 w-4 h-4 rounded text-emerald-600 accent-emerald-600">
+                            <span class="text-xs font-semibold text-slate-800">Máy chiếu / Tivi thông minh</span>
+                        </label>
+
+                        <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-hnue-500 bg-slate-50/70 cursor-pointer select-none">
+                            <input type="checkbox" name="classEquipItem" value="Mạng Internet / Wifi lớp học" class="mt-0.5 w-4 h-4 rounded text-emerald-600 accent-emerald-600">
+                            <span class="text-xs font-semibold text-slate-800">Mạng Internet / Wifi lớp học</span>
+                        </label>
+
+                        <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-hnue-500 bg-slate-50/70 cursor-pointer select-none">
+                            <input type="checkbox" name="classEquipItem" value="Bộ thí nghiệm biểu diễn của Giáo viên" class="mt-0.5 w-4 h-4 rounded text-emerald-600 accent-emerald-600">
+                            <span class="text-xs font-semibold text-slate-800">Bộ thí nghiệm biểu diễn của Giáo viên</span>
+                        </label>
+
+                        <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-hnue-500 bg-slate-50/70 cursor-pointer select-none">
+                            <input type="checkbox" name="classEquipItem" value="Bộ thí nghiệm thực hành nhóm HS (6-8 nhóm)" class="mt-0.5 w-4 h-4 rounded text-emerald-600 accent-emerald-600">
+                            <span class="text-xs font-semibold text-slate-800">Bộ thí nghiệm thực hành nhóm HS (6-8 nhóm)</span>
+                        </label>
+
+                        <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-hnue-500 bg-slate-50/70 cursor-pointer select-none">
+                            <input type="checkbox" name="classEquipItem" value="Thiết bị cảm biến / Smartphone (PhET, Coach 7, phyphox)" class="mt-0.5 w-4 h-4 rounded text-emerald-600 accent-emerald-600">
+                            <span class="text-xs font-semibold text-slate-800">Thiết bị cảm biến / Smartphone (PhET, Coach 7, phyphox)</span>
+                        </label>
+
+                        <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-hnue-500 bg-slate-50/70 cursor-pointer select-none">
+                            <input type="checkbox" name="classEquipItem" value="Bảng phụ / Phiếu học tập nhóm" class="mt-0.5 w-4 h-4 rounded text-emerald-600 accent-emerald-600">
+                            <span class="text-xs font-semibold text-slate-800">Bảng phụ / Phiếu học tập nhóm</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 4. Nhu cầu đặc biệt (Học sinh khiếm khuyết / hòa nhập,...) -->
+                <div class="space-y-1.5">
+                    <label for="newClassSpecialNeeds" class="block text-xs font-extrabold text-slate-800 uppercase tracking-wide">
+                        4. Nhu cầu đặc biệt (Học sinh khiếm khuyết, hỗ trợ hòa nhập,...)
+                    </label>
+                    <input id="newClassSpecialNeeds" type="text" placeholder="VD: 1 học sinh khiếm thị nhẹ (cần ngồi bàn đầu, in phiếu học tập cỡ chữ lớn)..." class="w-full rounded-xl border-2 border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-hnue-600 focus:outline-none">
+                    
+                    <!-- Gợi ý chọn nhanh nhu cầu đặc biệt -->
+                    <div class="flex flex-wrap items-center gap-1.5 pt-1">
+                        <span class="text-[11px] text-slate-500 font-semibold mr-1">Chọn nhanh:</span>
+                        <button type="button" onclick="fillSpecialNeedPreset('Không có')" class="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition">
+                            Không có
+                        </button>
+                        <button type="button" onclick="fillSpecialNeedPreset('1 học sinh khiếm thị nhẹ (cần ngồi bàn đầu, in Phiếu học tập cỡ chữ lớn 16pt)')" class="text-[11px] px-2 py-0.5 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-medium transition">
+                            + 1 HS khiếm thị nhẹ
+                        </button>
+                        <button type="button" onclick="fillSpecialNeedPreset('1 học sinh hạn chế vận động tay (ưu tiên phân công quan sát & đọc số liệu trong nhóm thí nghiệm)')" class="text-[11px] px-2 py-0.5 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-medium transition">
+                            + 1 HS hạn chế vận động tay
+                        </button>
+                        <button type="button" onclick="fillSpecialNeedPreset('1 học sinh khiếm thính nhẹ (cần video thí nghiệm có phụ đề trực quan & sơ đồ minh họa rõ)')" class="text-[11px] px-2 py-0.5 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-medium transition">
+                            + 1 HS khiếm thính nhẹ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5. Một vài lưu ý đặc biệt khác -->
+                <div class="space-y-1">
+                    <label for="newClassOtherNotes" class="block text-xs font-extrabold text-slate-800 uppercase tracking-wide">
+                        5. Một vài lưu ý đặc biệt khác (Đặc điểm nhận thức, nề nếp thực hành,...)
+                    </label>
+                    <textarea id="newClassOtherNotes" rows="2" placeholder="VD: Học sinh sôi nổi nhưng dễ mất trật tự khi phát dụng cụ; cần quy định rõ 7 phút lắp mạch và kiểm tra chéo..." class="w-full rounded-xl border-2 border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-hnue-600 focus:outline-none"></textarea>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200">
+                <button type="button" onclick="toggleModal('addClassModal', false)" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-600 hover:bg-slate-100">
+                    Hủy
+                </button>
+                <button type="button" onclick="saveNewClassProfile()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-xs flex items-center gap-1.5">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>Lưu hồ sơ lớp</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Đăng nhập / Đăng ký tài khoản Giáo viên -->
+    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl border-2 border-slate-200 max-w-md w-full p-6 shadow-xl space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div class="flex items-center gap-2">
+                    <button type="button" id="authTabLogin" onclick="switchAuthTab('login')" class="px-3.5 py-1.5 rounded-lg text-sm font-extrabold bg-hnue-700 text-white">
+                        Đăng nhập
+                    </button>
+                    <button type="button" id="authTabRegister" onclick="switchAuthTab('register')" class="px-3.5 py-1.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100">
+                        Đăng ký
+                    </button>
+                </div>
+                <button onclick="toggleModal('authModal', false)" class="text-slate-400 hover:text-slate-700">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Form Đăng nhập -->
+            <div id="authLoginForm" class="space-y-3.5 text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Email Giáo viên / Tài khoản</label>
+                    <input id="loginEmailInput" type="email" value="gv.vatli@hnue.edu.vn" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu</label>
+                    <input id="loginPassInput" type="password" value="••••••••" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5">
+                </div>
+                <button type="button" onclick="submitAuth('login')" class="w-full py-2.5 rounded-xl bg-hnue-700 hover:bg-hnue-800 text-white font-extrabold text-sm transition">
+                    Đăng nhập vào Science Lab
+                </button>
+            </div>
+
+            <!-- Form Đăng ký -->
+            <div id="authRegisterForm" class="hidden space-y-3.5 text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Họ và tên Giáo viên *</label>
+                    <input id="regNameInput" type="text" placeholder="VD: ThS. Nguyễn Văn A" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Email liên hệ *</label>
+                    <input id="regEmailInput" type="email" placeholder="giaovien.khtn@hnue.edu.vn" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu *</label>
+                    <input id="regPassInput" type="password" placeholder="Tối thiểu 6 ký tự" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5">
+                </div>
+                <button type="button" onclick="submitAuth('register')" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm transition">
+                    Tạo tài khoản mới
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast thông báo góc dưới màn hình -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2.5 text-xs sm:text-sm font-bold">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMessage">Đã thực hiện thành công!</span>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- 4. JAVASCRIPT LOGIC & DATA                                        -->
+    <!-- ================================================================= -->
+    <script>
+        // 1. Hàm chuẩn hóa ký hiệu Vật lí (Khử lỗi dính dấu $s, $t từ Gemini)
+        function sanitizePhysicsText(rawHtml) {
+            if (!rawHtml) return '';
+            return rawHtml
+                .replace(/\$([a-zA-Z0-9_]+)\$/g, '<span class="phys-var">$1</span>')
+                .replace(/\$([a-zA-Z])\b/g, '<span class="phys-var">$1</span>');
+        }
+
+        // 2. Danh sách Hồ sơ lớp (Gồm 5 trường: Tên, Sĩ số, Thiết bị có sẵn [Tickbox], Nhu cầu đặc biệt, Lưu ý đặc biệt khác)
+        let classProfiles = [
+            {
+                id: '8A1',
+                name: 'Lớp 8A1',
+                size: 40,
+                equipments: [
+                    'Máy chiếu / Tivi thông minh',
+                    'Mạng Internet / Wifi lớp học',
+                    'Bộ thí nghiệm thực hành nhóm HS (6-8 nhóm)',
+                    'Bảng phụ / Phiếu học tập nhóm'
+                ],
+                specialNeeds: 'Không có',
+                otherNotes: 'Học lực Khá/Giỏi, hợp tác nhóm tốt, thao tác lắp ráp dụng cụ thí nghiệm nhanh và chính xác.'
+            },
+            {
+                id: '8A3',
+                name: 'Lớp 8A3',
+                size: 42,
+                equipments: [
+                    'Máy chiếu / Tivi thông minh',
+                    'Mạng Internet / Wifi lớp học',
+                    'Bộ thí nghiệm biểu diễn của Giáo viên',
+                    'Bảng phụ / Phiếu học tập nhóm'
+                ],
+                specialNeeds: '1 học sinh khiếm thị nhẹ (cần ngồi bàn đầu gần bàn thí nghiệm biểu diễn, in Phiếu học tập cỡ chữ lớn 16pt)',
+                otherNotes: 'Học sinh sôi nổi nhưng dễ mất tập trung khi chuyển giao hoạt động; cần hướng dẫn kỹ cách đổi đơn vị chuẩn trước khi tính toán.'
+            },
+            {
+                id: '9A2',
+                name: 'Lớp 9A2',
+                size: 38,
+                equipments: [
+                    'Máy chiếu / Tivi thông minh',
+                    'Mạng Internet / Wifi lớp học',
+                    'Bộ thí nghiệm biểu diễn của Giáo viên',
+                    'Thiết bị cảm biến / Smartphone (PhET, Coach 7, phyphox)'
+                ],
+                specialNeeds: '1 học sinh hạn chế vận động tay (ưu tiên phân công vai trò điều khiển mô phỏng PhET & đọc số liệu trong nhóm)',
+                otherNotes: 'Nền tảng Toán tốt, tư duy logic nhanh, hứng thú với việc vẽ đồ thị U-I và phân tích sai số thực nghiệm.'
+            },
+            {
+                id: 'STEM_89',
+                name: 'CLB STEM 8-9',
+                size: 24,
+                equipments: [
+                    'Máy chiếu / Tivi thông minh',
+                    'Bộ thí nghiệm thực hành nhóm HS (6-8 nhóm)',
+                    'Thiết bị cảm biến / Smartphone (PhET, Coach 7, phyphox)',
+                    'Bảng phụ / Phiếu học tập nhóm'
+                ],
+                specialNeeds: '1 học sinh khiếm thính nhẹ (cần video hướng dẫn có phụ đề trực quan & sơ đồ lắp ráp in màu rõ nét)',
+                otherNotes: 'Lớp ngoại khóa 90 phút, học sinh đam mê chế tạo sản phẩm kỹ thuật nhưng cần nhắc nhở quy tắc an toàn khi dùng dụng cụ.'
+            }
+        ];
+
+        // 3. Từ điển đa ngôn ngữ (Tiếng Việt / Tiếng Anh) cho giao diện
+        const uiTranslations = {
+            VI: {
+                headerSubtitle: 'Web hỗ trợ giáo viên KHTN và Vật lí xây dựng bài giảng có thí nghiệm',
+                navCreate: 'Soạn mới',
+                navRepo: 'Kho KHBD',
+                navClasses: 'Hồ sơ lớp',
+                labelClass: 'Lớp',
+                editCurrentClassBtn: 'Chỉnh sửa hồ sơ lớp',
+                addNewClassBtn: 'Thêm lớp',
+                labelGrade: 'Khối lớp',
+                labelBook: 'SGK',
+                labelLesson: 'Bài',
+                tpl5512Title: 'Soạn theo CV 5512',
+                tpl5512Desc: 'Chuẩn 4 hoạt động của Bộ GD&ĐT (Mở đầu, Hình thành kiến thức qua TN, Luyện tập, Vận dụng).',
+                tplStemTitle: 'Soạn theo Chủ đề STEM',
+                tplStemDesc: 'Chuỗi 5 hoạt động thiết kế kỹ thuật hoặc kịch bản CLB STEM ngoại khóa gắn với chế tạo sản phẩm.',
+                materialsHeading: 'Gợi ý học liệu',
+                materialsSub: 'Tích chọn các học liệu muốn đưa vào bài giảng & Phiếu học tập',
+                chkKitLabel: 'Bộ thí nghiệm',
+                chkSimLabel: 'Mô phỏng',
+                chkVideoLabel: 'Video',
+                chkImageLabel: 'Hình ảnh',
+                customNoteLabel: 'Ghi chú điều chỉnh theo tình hình thực tế lớp học (Tùy chọn):',
+                generateBtnText: 'Đề xuất & Tạo Kế hoạch bài dạy',
+                tabLessonPlan: 'Kế hoạch bài dạy',
+                tabWorksheet: 'Phiếu học tập mẫu',
+                tabSimulation: 'Mô phỏng TN trực quan',
+                saveRepoBtn: 'Lưu vào Kho KHBD',
+                copyBtn: 'Sao chép',
+                exportWordBtn: 'Xuất Word (.doc)',
+                repoHeading: 'Kho Kế hoạch bài dạy đã lưu',
+                classesHeading: 'Quản lý Hồ sơ lớp học',
+                loginBtn: 'Đăng nhập',
+                registerBtn: 'Đăng ký',
+                logoutBtn: 'Đăng xuất',
+                langLabel: 'Ngôn ngữ / Language',
+                darkModeTitle: 'Giao diện tối',
+                darkModeSub: 'Dark Mode'
+            },
+            EN: {
+                headerSubtitle: 'Platform supporting Science & Physics teachers in building experiment-based lessons',
+                navCreate: 'New Lesson Plan',
+                navRepo: 'Saved Plans',
+                navClasses: 'Class Profiles',
+                labelClass: 'Class',
+                editCurrentClassBtn: 'Edit Class Profile',
+                addNewClassBtn: 'Add Class',
+                labelGrade: 'Grade',
+                labelBook: 'Textbook',
+                labelLesson: 'Lesson',
+                tpl5512Title: 'Standard 5512 Format',
+                tpl5512Desc: '4-stage inquiry structure (Warm-up, Experiment & Knowledge Formation, Practice, Application).',
+                tplStemTitle: 'STEM Topic Format',
+                tplStemDesc: '5-step Engineering Design Process & STEM Club hands-on prototyping activities.',
+                materialsHeading: 'Suggested Lab Materials',
+                materialsSub: 'Select materials to embed into your Lesson Plan & Student Worksheet',
+                chkKitLabel: 'Lab Equipment Kit',
+                chkSimLabel: 'Simulations',
+                chkVideoLabel: 'Videos',
+                chkImageLabel: 'Diagrams & Worksheets',
+                customNoteLabel: 'Classroom Context & Custom Notes (Optional):',
+                generateBtnText: 'Generate Lesson Plan & Worksheet',
+                tabLessonPlan: 'Lesson Plan (KHBD)',
+                tabWorksheet: 'Student Worksheet',
+                tabSimulation: 'Interactive Simulation',
+                saveRepoBtn: 'Save to Repository',
+                copyBtn: 'Copy',
+                exportWordBtn: 'Export Word (.doc)',
+                repoHeading: 'Saved Lesson Plans Repository',
+                classesHeading: 'Class Profiles Management',
+                loginBtn: 'Sign In',
+                registerBtn: 'Sign Up',
+                logoutBtn: 'Sign Out',
+                langLabel: 'Language / Ngôn ngữ',
+                darkModeTitle: 'Dark Appearance',
+                darkModeSub: 'Chế độ tối'
+            }
+        };
+
+        // 4. Cơ sở dữ liệu 10 Bài học mẫu trọng tâm trong SGK KHTN & Vật lí
+        const lessonsDatabase = [
+            {
+                id: 'khtn8_b15',
+                grade: 'KHTN 8',
+                title: 'Bài 15: Áp suất trên một bề mặt',
+                chapter: 'Chương III: Khối lượng riêng và Áp suất',
+                formulaHtml: '<span class="phys-formula">p = F / S</span> (trong đó <span class="phys-var">p</span> là áp suất [Pa], <span class="phys-var">F</span> là áp lực [N], <span class="phys-var">S</span> là diện tích bị ép [m²])',
+                realKit: {
+                    name: 'Bộ thí nghiệm khảo sát Áp suất trên bề mặt (Mã TB: KHTN8-AP01)',
+                    items: [
+                        '03 khối hình hộp chữ nhật bằng kim loại/gỗ có cùng kích thước (trọng lượng P = 5 N mỗi khối)',
+                        '01 khay nhựa trong suốt chứa cát mịn hoặc bột mì phẳng mặt (dày 5 cm)',
+                        '01 thước thẳng chia độ tới milimét để đo độ lún h của khối hộp'
+                    ],
+                    setupNote: 'Đặt lần lượt 1 khối nằm ngang, 2 khối chồng lên nhau, và 1 khối dựng thẳng đứng trên mặt cát phẳng để so sánh độ lún h.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Under Pressure & Mô phỏng Độ lún bề mặt (Coach 7)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/under-pressure',
+                    coachActivity: 'Hoạt động Coach 7: Mô hình hóa sự phụ thuộc của độ lún h vào áp lực F và diện tích tiếp xúc S.'
+                },
+                video: {
+                    title: 'Video hướng dẫn tiến hành TN độ lún cát & Hiện tượng thực tế: Tại sao xe tăng dùng bánh xích?',
+                    phenomenon: 'So sánh người đi giày trượt tuyết bản rộng không bị lún trong tuyết so với đi giày đế nhỏ; giải thích cấu tạo lưỡi dao sắc (S nhỏ) và móng nhà rộng (S lớn).'
+                },
+                worksheetSummary: 'Phiếu học tập số 1 & 2: Bảng ghi độ lún h trong 3 trường hợp (thay đổi F, giữ nguyên S; giữ nguyên F, thay đổi S) và rút ra kết luận.',
+                stemTopic: 'Thiết kế móng cầu chịu lực & Đôi giày đi trên bùn/cát không lún từ vật liệu tái chế',
+                simConfig: {
+                    s1Label: 'Áp lực tác dụng (F):', s1Min: 10, s1Max: 60, s1Step: 10, s1Val: 20, s1Unit: 'N',
+                    s2Label: 'Diện tích bị ép (S):', s2Min: 1, s2Max: 4, s2Step: 1, s2Val: 2, s2Unit: '×10⁻² m²',
+                    mode: 'pressure'
+                }
+            },
+            {
+                id: 'khtn8_b13',
+                grade: 'KHTN 8',
+                title: 'Bài 13: Khối lượng riêng',
+                chapter: 'Chương III: Khối lượng riêng và Áp suất',
+                formulaHtml: '<span class="phys-formula">D = m / V</span> (trong đó <span class="phys-var">D</span> là khối lượng riêng [kg/m³ hoặc g/cm³], <span class="phys-var">m</span> là khối lượng, <span class="phys-var">V</span> là thể tích)',
+                realKit: {
+                    name: 'Bộ thí nghiệm xác định Khối lượng riêng của vật rắn và chất lỏng (KHTN8-KLR)',
+                    items: [
+                        '01 cân điện tử hiện số (độ chia nhỏ nhất 0,1 g)',
+                        '01 bình chia độ 100 ml và 01 bình tràn',
+                        'Bộ 03 khối trụ cùng thể tích bằng Nhôm, Sắt, Đồng và 01 viên sỏi bất kỳ'
+                    ],
+                    setupNote: 'Cân khối lượng m bằng cân điện tử, đo thể tích V bằng phương pháp dâng nước trong bình chia độ.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Density (Khối lượng riêng & Sự nổi)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/density',
+                    coachActivity: 'Vẽ đồ thị m theo V của các mẫu sắt có kích thước khác nhau trên Coach 7 để tìm hệ số góc D.'
+                },
+                video: {
+                    title: 'Video hướng dẫn đo KLR viên sỏi & Hiện tượng tháp chất lỏng 5 tầng không trộn lẫn',
+                    phenomenon: 'Quan sát cột chất lỏng gồm mật ong, nước rửa bát, nước màu, dầu ăn và cồn xếp tầng theo thứ tự khối lượng riêng.'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng đo khối lượng m (g), thể tích V (cm³) và tính D = m/V để nhận diện chất làm vật.',
+                stemTopic: 'Chế tạo Tháp chất lỏng phân tầng & Dụng cụ kiểm tra độ mặn nước muối cho nông nghiệp',
+                simConfig: {
+                    s1Label: 'Khối lượng mẫu vật (m):', s1Min: 20, s1Max: 200, s1Step: 20, s1Val: 78, s1Unit: 'g',
+                    s2Label: 'Thể tích đo được (V):', s2Min: 10, s2Max: 50, s2Step: 5, s2Val: 10, s2Unit: 'cm³',
+                    mode: 'density'
+                }
+            },
+            {
+                id: 'khtn8_b16',
+                grade: 'KHTN 8',
+                title: 'Bài 16: Áp suất chất lỏng. Áp suất khí quyển',
+                chapter: 'Chương III: Khối lượng riêng và Áp suất',
+                formulaHtml: '<span class="phys-formula">p = d · h = ρ · g · h</span> (áp suất chất lỏng phụ thuộc trọng lượng riêng <span class="phys-var">d</span> và độ sâu <span class="phys-var">h</span>)',
+                realKit: {
+                    name: 'Bộ thí nghiệm khảo sát Áp suất chất lỏng & Bình thông nhau (KHTN8-APCL)',
+                    items: [
+                        '01 bình trụ có 3 lỗ ngang ở các độ sâu h₁, h₂, h₃ khác nhau bịt màng cao su/nút',
+                        '01 áp kế chữ U có hộp màng cao su (nhúng ở các hướng khác nhau tại cùng độ sâu h)',
+                        '02 giác mút cao su và ống thủy tinh thí nghiệm áp suất khí quyển giữ nước không chảy'
+                    ],
+                    setupNote: 'Quan sát độ vọt xa của tia nước ở 3 độ sâu khác nhau và độ chênh lệch mực chất lỏng Δh trên áp kế chữ U.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Under Pressure (Đo áp suất theo độ sâu h và trọng lượng riêng chất lỏng)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/under-pressure',
+                    coachActivity: 'Dùng cảm biến áp suất khí quyển trên điện thoại (phyphox Barometer) đo chênh lệch áp suất giữa tầng 1 và tầng 4.'
+                },
+                video: {
+                    title: 'Video TN Quả cầu Magdeburg & Hiện tượng bẹp vỏ lon nước ngọt khi làm lạnh đột ngột',
+                    phenomenon: 'Giải thích tại sao đê chắn nước có chân đê rộng hơn mặt đê và hiện tượng ù tai khi đi máy bay hoặc lặn sâu.'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng số liệu độ chênh mực chất lỏng Δh theo độ sâu h và hướng mặt màng cao su.',
+                stemTopic: 'Chế tạo Cánh tay robot thủy lực hoặc Đài phun nước tự động Heron từ chai nhựa',
+                simConfig: {
+                    s1Label: 'Độ sâu điểm khảo sát (h):', s1Min: 1, s1Max: 10, s1Step: 1, s1Val: 4, s1Unit: 'm',
+                    s2Label: 'Trọng lượng riêng (d):', s2Min: 8, s2Max: 13, s2Step: 1, s2Val: 10, s2Unit: 'kN/m³',
+                    mode: 'fluid_pressure'
+                }
+            },
+            {
+                id: 'khtn8_b17',
+                grade: 'KHTN 8',
+                title: 'Bài 17: Lực đẩy Archimedes',
+                chapter: 'Chương III: Khối lượng riêng và Áp suất',
+                formulaHtml: '<span class="phys-formula">F<sub>A</sub> = d · V</span> (với <span class="phys-var">d</span> là trọng lượng riêng chất lỏng [N/m³], <span class="phys-var">V</span> là thể tích phần chất lỏng bị vật chiếm chỗ [m³])',
+                realKit: {
+                    name: 'Bộ thí nghiệm đo Lực đẩy Archimedes với bình tràn (KHTN8-FA)',
+                    items: [
+                        '01 lực kế lò xo giới hạn đo 5 N (độ chia nhỏ nhất 0,1 N)',
+                        '01 quả nặng hình trụ + 01 cốc nhựa A treo dưới lực kế',
+                        '01 bình tràn + cốc hứng nước tràn B + giá thí nghiệm'
+                    ],
+                    setupNote: 'Đo P khi treo ngoài không khí, nhúng quả nặng vào bình tràn để nước tràn sang cốc B, đọc F hợp lực rồi đổ nước từ cốc B vào cốc A để kiểm chứng lực kế chỉ lại đúng P.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Buoyancy (Lực đẩy Archimedes & Điều kiện định lượng vật nổi/chìm)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/buoyancy',
+                    coachActivity: 'Phân tích video quá trình nhúng dần quả nặng vào nước trên Coach 7.'
+                },
+                video: {
+                    title: 'Video hướng dẫn thao tác chuẩn TN bình tràn & Hiện tượng tàu ngầm lặn nổi',
+                    phenomenon: 'Tại sao con tàu bằng thép nặng hàng chục nghìn tấn lại nổi trên mặt biển trong khi một chiếc đinh sắt nhỏ lại chìm?'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng đối chiếu F_A = P - F và trọng lượng phần nước tràn P_nước.',
+                stemTopic: 'Chế tạo Tàu ngầm mini lặn nổi điều khiển bằng ống tiêm (Nguyên lý lặn nổi Descartes)',
+                simConfig: {
+                    s1Label: 'Thể tích phần chìm (V):', s1Min: 50, s1Max: 500, s1Step: 50, s1Val: 200, s1Unit: 'cm³',
+                    s2Label: 'Trọng lượng riêng chất lỏng:', s2Min: 8, s2Max: 12, s2Step: 2, s2Val: 10, s2Unit: '×10³ N/m³',
+                    mode: 'archimedes'
+                }
+            },
+            {
+                id: 'khtn8_b18',
+                grade: 'KHTN 8',
+                title: 'Bài 18: Tác dụng làm quay của lực. Moment lực',
+                chapter: 'Chương IV: Tác dụng làm quay của lực',
+                formulaHtml: '<span class="phys-formula">M = F · d</span> (với <span class="phys-var">F</span> là độ lớn lực [N], <span class="phys-var">d</span> là cánh tay đòn [m]; quy tắc cân bằng: <span class="phys-formula">F₁ · d₁ = F₂ · d₂</span>)',
+                realKit: {
+                    name: 'Bộ thí nghiệm khảo sát Cân bằng của đòn bẩy và Moment lực (KHTN8-MM)',
+                    items: [
+                        '01 thanh đòn bẩy có chia vạch khoảng cách đều nhau gắn trên trục quay O',
+                        'Bộ các quả nặng móc treo (mỗi quả P = 0,5 N)',
+                        '01 lực kế lò xo để kéo lệch góc kiểm tra vai trò của cánh tay đòn vuông góc'
+                    ],
+                    setupNote: 'Treo các số lượng quả nặng khác nhau ở hai bên trục quay O sao cho thanh đòn bẩy nằm ngang cân bằng.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Balancing Act (Đòn bẩy & Cân bằng Moment lực)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/balancing-act',
+                    coachActivity: 'Trò chơi thử thách cân bằng Moment lực 4 cấp độ trên PhET Balancing Act.'
+                },
+                video: {
+                    title: 'Video hướng dẫn cân chỉnh đòn bẩy & Hiện tượng dùng cờ-lê tháo ốc, bập bênh, cần cẩu tháp',
+                    phenomenon: 'Tại sao tay nắm cửa luôn được lắp ở mép xa bản lề nhất chứ không lắp ở gần bản lề?'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng kiểm nghiệm tích F₁·d₁ và F₂·d₂ trong 3 phương án lắp quả nặng.',
+                stemTopic: 'Chế tạo Cân đòn Rô-béc-van hoặc Cần cẩu tháp có đối trọng cân bằng',
+                simConfig: {
+                    s1Label: 'Lực tác dụng F (N):', s1Min: 2, s1Max: 20, s1Step: 2, s1Val: 10, s1Unit: 'N',
+                    s2Label: 'Cánh tay đòn d (cm):', s2Min: 5, s2Max: 40, s2Step: 5, s2Val: 20, s2Unit: 'cm',
+                    mode: 'moment'
+                }
+            },
+            {
+                id: 'khtn8_b21',
+                grade: 'KHTN 8',
+                title: 'Bài 21: Dòng điện, nguồn điện',
+                chapter: 'Chương V: Điện',
+                formulaHtml: 'Dòng điện là dòng dịch chuyển có hướng của các hạt mang điện; chiều dòng điện từ cực dương (<span class="phys-var">+</span>) qua dây dẫn tới cực âm (<span class="phys-var">-</span>).',
+                realKit: {
+                    name: 'Bộ thí nghiệm Nguồn điện & Phân loại vật dẫn điện - vật cách điện (KHTN8-DND)',
+                    items: [
+                        '01 đế lắp pin (2 viên pin 1,5 V), 01 bóng đèn LED/sợi đốt kèm đui, 01 công tắc K',
+                        '02 kẹp cá sấu kiểm tra mẫu vật + các mẫu: thanh đồng, thanh nhựa, ruột bút chì (than chì), gỗ khô, nước muối',
+                        'Bộ điện cực đồng - kẽm để làm thí nghiệm Pin chanh / Pin khoai tây'
+                    ],
+                    setupNote: 'Kẹp lần lượt các mẫu vật vào hai đầu kẹp cá sấu trong mạch thử, quan sát trạng thái sáng của đèn LED để phân loại.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Bộ lắp ráp mạch điện DC (Circuit Construction Kit: DC)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/circuit-construction-kit-dc',
+                    coachActivity: 'Quan sát mô hình chuyển động của các electron tự do trong dây dẫn kim loại khi đóng khóa K.'
+                },
+                video: {
+                    title: 'Video hướng dẫn lắp mạch thử chất dẫn điện & Thí nghiệm thắp sáng đèn LED bằng 4 quả chanh',
+                    phenomenon: 'Tại sao lõi dây điện làm bằng đồng còn vỏ bọc ngoài lại làm bằng nhựa PVC?'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng dự đoán và kết quả thí nghiệm kiểm tra 8 vật liệu dẫn điện / cách điện.',
+                stemTopic: 'Chế tạo Pin sinh học từ chanh/khoai tây hoặc Trò chơi vòng dây khéo tay không chạm',
+                simConfig: {
+                    s1Label: 'Số nguồn pin nối tiếp:', s1Min: 1, s1Max: 4, s1Step: 1, s1Val: 2, s1Unit: 'pin (1.5V)',
+                    s2Label: 'Độ dẫn điện mẫu thử:', s2Min: 0, s2Max: 2, s2Step: 1, s2Val: 2, s2Unit: 'Mức',
+                    mode: 'circuit'
+                }
+            },
+            {
+                id: 'khtn8_b22',
+                grade: 'KHTN 8',
+                title: 'Bài 22: Mạch điện đơn giản',
+                chapter: 'Chương V: Điện',
+                formulaHtml: 'Sơ đồ mạch điện gồm nguồn điện, công tắc <span class="phys-var">K</span>, bóng đèn, điện trở, cầu chì và chuông điện nối bằng dây dẫn.',
+                realKit: {
+                    name: 'Bộ thực hành lắp Mạch điện đơn giản & Cầu chì bảo vệ (KHTN8-MD)',
+                    items: [
+                        'Bảng lắp mạch điện thực hành đồng bộ (nguồn 3V - 6V, khóa K, 2 bóng đèn, chuông điện, biến trở)',
+                        'Bộ dây nối có đầu cắm an toàn (đỏ/đen)',
+                        '01 mô hình cầu chì dây chì mảnh để minh họa hiện tượng đoản mạch (ngắn mạch)'
+                    ],
+                    setupNote: 'Học sinh vẽ sơ đồ mạch điện trước trên Phiếu học tập, được giáo viên duyệt sơ đồ rồi mới đóng nguồn.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Circuit Construction Kit DC - Virtual Lab (Chuyển đổi chế độ Ký hiệu sơ đồ)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/circuit-construction-kit-dc-virtual-lab',
+                    coachActivity: 'Mô phỏng hiện tượng cháy cầu chì khi xảy ra ngắn mạch trên PhET mà không gây nguy hiểm.'
+                },
+                video: {
+                    title: 'Video hướng dẫn chuyển từ mạch thật sang sơ đồ & Hệ thống đèn cầu thang 2 công tắc',
+                    phenomenon: 'Nguyên lý hoạt động của aptomat và cầu chì tự ngắt trong mạng điện gia đình khi quá tải.'
+                },
+                worksheetSummary: 'Phiếu học tập: Vẽ sơ đồ mạch điện theo 3 yêu cầu thực tế và lắp mạch tương ứng.',
+                stemTopic: 'Thiết kế Mô hình ngôi nhà thông minh tiết kiệm điện hoặc Mạch báo động cửa mở',
+                simConfig: {
+                    s1Label: 'Hiệu điện thế nguồn (U):', s1Min: 3, s1Max: 12, s1Step: 3, s1Val: 6, s1Unit: 'V',
+                    s2Label: 'Tổng trở mạch ngoài (R):', s2Min: 2, s2Max: 12, s2Step: 2, s2Val: 4, s2Unit: 'Ω',
+                    mode: 'ohm'
+                }
+            },
+            {
+                id: 'khtn9_b5',
+                grade: 'KHTN 9',
+                title: 'Bài 5: Khúc xạ ánh sáng',
+                chapter: 'Chương II: Ánh sáng (KHTN 9)',
+                formulaHtml: 'Định luật khúc xạ ánh sáng: <span class="phys-formula">n₁ · sin(i) = n₂ · sin(r)</span> hay <span class="phys-formula">sin(i) / sin(r) = n₂₁</span> (với <span class="phys-var">i</span> là góc tới, <span class="phys-var">r</span> là góc khúc xạ)',
+                realKit: {
+                    name: 'Bộ thí nghiệm Quang hình khảo sát Khúc xạ ánh sáng (KHTN9-KXAS)',
+                    items: [
+                        '01 bảng chia độ tròn (0° - 90° - 0°) có gắn bản bán trụ bằng thủy tinh trong suốt (chiết suất n ≈ 1,5)',
+                        '01 nguồn phát tia laser đỏ mảnh (hoặc đèn chiếu 1 khe sáng hẹp)',
+                        '01 cốc nước + đũa/bút chì để mở đầu hiện tượng gãy khúc tại mặt phân cách'
+                    ],
+                    setupNote: 'Chiếu tia sáng đi qua tâm I của bản bán trụ với các góc tới i = 0°, 15°, 30°, 45°, 60° và đọc góc khúc xạ r tương ứng.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Bending Light (Khúc xạ & Phản xạ toàn phần)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/bending-light',
+                    coachActivity: 'Dùng thước đo góc ảo trên PhET đo góc i, r với các môi trường nước, thủy tinh, kim cương và tính tỉ số sin(i)/sin(r).'
+                },
+                video: {
+                    title: 'Video hướng dẫn căn chỉnh tâm bản bán trụ & Hiện tượng nhìn con cá dưới nước cạn hơn thực tế',
+                    phenomenon: 'Tại sao chiếc đũa cắm nghiêng trong bát nước lại trông như bị gãy khúc tại mặt nước?'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng đo góc tới i, góc khúc xạ r và tính tỉ số sin(i) / sin(r) tại 5 góc tới.',
+                stemTopic: 'Chế tạo Kính tiềm vọng kết hợp lăng kính hoặc Hộp trình diễn đường truyền tia Laser trong nước đường',
+                simConfig: {
+                    s1Label: 'Góc tới i (độ):', s1Min: 0, s1Max: 75, s1Step: 15, s1Val: 45, s1Unit: '°',
+                    s2Label: 'Chiết suất môi trường 2 (n):', s2Min: 1.3, s2Max: 1.7, s2Step: 0.1, s2Val: 1.5, s2Unit: '',
+                    mode: 'refraction'
+                }
+            },
+            {
+                id: 'khtn9_b11',
+                grade: 'KHTN 9',
+                title: 'Bài 11: Điện trở. Định luật Ohm',
+                chapter: 'Chương IV: Điện từ (KHTN 9)',
+                formulaHtml: '<span class="phys-formula">I = U / R</span> (trong đó <span class="phys-var">I</span> là cường độ dòng điện [A], <span class="phys-var">U</span> là hiệu điện thế [V], <span class="phys-var">R</span> là điện trở dây dẫn [Ω])',
+                realKit: {
+                    name: 'Bộ thí nghiệm khảo sát Định luật Ohm và vẽ đường đặc trưng Vôn - Ampe (KHTN9-OHM)',
+                    items: [
+                        '01 nguồn điện một chiều điều chỉnh được (0 - 12 V) hoặc bộ pin kèm biến trở con chạy',
+                        '01 Ampe kế (GHĐ 1 A) mắc nối tiếp và 01 Vôn kế (GHĐ 12 V) mắc song song',
+                        '02 đoạn dây điện trở mẫu R₁ = 10 Ω và R₂ = 20 Ω bằng hợp kim Nikelin'
+                    ],
+                    setupNote: 'Thay đổi U qua dây dẫn thành 5 giá trị (1,5V; 3,0V; 4,5V; 6,0V), đọc I tương ứng và vẽ đồ thị I theo U.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Ohm\'s Law & Circuit Construction Kit DC',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/ohms-law',
+                    coachActivity: 'Nhập bảng số liệu (U, I) vào Coach 7 để khớp hàm tuyến tính I = (1/R)·U.'
+                },
+                video: {
+                    title: 'Video hướng dẫn mắc đúng cực (+) (-) của Ampe kế, Vôn kế & Ứng dụng chiết áp điều chỉnh độ sáng đèn',
+                    phenomenon: 'Giải thích tại sao khi điện áp lưới điện giảm vào giờ cao điểm thì đèn sợi đốt bị tối đi.'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng số liệu 5 lần đo (U, I), thương số U/I và khung lưới tọa độ vẽ đồ thị.',
+                stemTopic: 'Thiết kế Bộ điều chỉnh tốc độ quạt mini & độ sáng đèn học bằng biến trở than chì',
+                simConfig: {
+                    s1Label: 'Hiệu điện thế hai đầu dây (U):', s1Min: 1.5, s1Max: 12, s1Step: 1.5, s1Val: 6, s1Unit: 'V',
+                    s2Label: 'Điện trở dây dẫn (R):', s2Min: 5, s2Max: 30, s2Step: 5, s2Val: 10, s2Unit: 'Ω',
+                    mode: 'ohm'
+                }
+            },
+            {
+                id: 'vl10_b10',
+                grade: 'Vật lí 10',
+                title: 'Bài 10: Sự rơi tự do (Thực hành đo gia tốc rơi tự do g)',
+                chapter: 'Chương II: Động học (Vật lí 10)',
+                formulaHtml: '<span class="phys-formula">s = ½ · g · t²</span> và <span class="phys-formula">v = g · t</span> (suy ra gia tốc rơi tự do <span class="phys-formula">g = 2s / t²</span> ≈ 9,8 m/s²)',
+                realKit: {
+                    name: 'Bộ thí nghiệm đo gia tốc rơi tự do bằng Cổng quang điện & Đồng hồ hiện số (VL10-RTD)',
+                    items: [
+                        '01 giá đỡ thẳng đứng có gắn thước thẳng 100 cm và nam châm điện giữ bi ở đỉnh',
+                        '01 cổng quang điện kết nối với đồng hồ đo thời gian hiện số (chế độ A↔B, độ chính xác 0,001 s)',
+                        '01 trụ thép nhỏ + công tắc kép đóng ngắt nam châm điện (kết hợp đồng hồ bấm giờ âm thanh phyphox)'
+                    ],
+                    setupNote: 'Thay đổi quãng đường rơi s (0,2 m; 0,4 m; 0,6 m; 0,8 m), đo thời gian rơi t 3 lần ở mỗi vị trí và tính g trung bình.'
+                },
+                simulation: {
+                    name: 'Mô phỏng Coach 7: Quay video chuyển động rơi của quả bóng (Video Measurement) & Ứng dụng phyphox Acoustic Stopwatch',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/projectile-motion',
+                    coachActivity: 'Dùng tính năng Acoustic Stopwatch trên app phyphox đo thời gian rơi từ tiếng gõ thả bi đến tiếng bi chạm mặt bàn.'
+                },
+                video: {
+                    title: 'Video TN ống Newton rút chân không (lông vũ và viên bi chì rơi nhanh như nhau) & Hướng dẫn cổng quang điện',
+                    phenomenon: 'Tại sao trong không khí tờ giấy phẳng rơi chậm hơn tờ giấy vo tròn, nhưng trong ống chân không chúng chạm đáy cùng lúc?'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng xử lý số liệu s, t₁, t₂, t₃, t_tb, t² và tính gia tốc g kèm sai số Δg.',
+                stemTopic: 'Thiết kế Bộ đo gia tốc rơi tự do chi phí thấp sử dụng cảm biến âm thanh điện thoại (phyphox)',
+                simConfig: {
+                    s1Label: 'Độ cao thả rơi (s):', s1Min: 0.2, s1Max: 2.0, s1Step: 0.2, s1Val: 0.8, s1Unit: 'm',
+                    s2Label: 'Gia tốc trọng trường (g):', s2Min: 9.8, s2Max: 9.8, s2Step: 0.1, s2Val: 9.8, s2Unit: 'm/s²',
+                    mode: 'freefall'
+                }
+            }
+        ];
+
+        const extraGradeLessons = [
+            {
+                id: 'khtn6_b40',
+                grade: 'KHTN 6',
+                title: 'Bài 40: Lực là gì? Biểu diễn lực và đo lực bằng lực kế',
+                chapter: 'Chủ đề Lực và Chuyển động (KHTN 6)',
+                formulaHtml: 'Độ biến dạng lò xo tỉ lệ với độ lớn lực kéo <span class="phys-var">F</span>; đơn vị đo lực là Newton (<span class="phys-var">N</span>).',
+                realKit: {
+                    name: 'Bộ thí nghiệm Lực kế lò xo & Tác dụng của lực làm biến dạng vật (KHTN6-LUC)',
+                    items: ['01 lực kế lò xo 5N', '01 lò xo xoắn treo trên giá', 'Bộ quả nặng 50g, 100g và xe lăn nhỏ'],
+                    setupNote: 'Học sinh hiệu chỉnh vạch số 0 của lực kế trước khi móc quả nặng.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Forces and Motion: Basics (Lực và Chuyển động cơ bản)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/forces-and-motion-basics',
+                    coachActivity: 'Khảo sát sự biến dạng của lò xo theo số quả nặng treo vào.'
+                },
+                video: {
+                    title: 'Video hướng dẫn đọc số chỉ lực kế đúng tầm mắt & Các hiện tượng biến dạng trong thể thao',
+                    phenomenon: 'Quan sát vợt cầu lông biến dạng khi đập cầu và cung tên biến dạng khi giương cung.'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng đo trọng lượng 4 đồ vật trong hộp bút bằng lực kế lò xo.',
+                stemTopic: 'Chế tạo Lực kế lò xo đơn giản từ ống nhựa trong suốt và dây chun/lò xo bút bi',
+                simConfig: {
+                    s1Label: 'Lực kéo tác dụng (F):', s1Min: 1, s1Max: 10, s1Step: 1, s1Val: 4, s1Unit: 'N',
+                    s2Label: 'Độ cứng lò xo (k):', s2Min: 50, s2Max: 200, s2Step: 50, s2Val: 100, s2Unit: 'N/m',
+                    mode: 'pressure'
+                }
+            },
+            {
+                id: 'khtn7_b16',
+                grade: 'KHTN 7',
+                title: 'Bài 16: Sự phản xạ ánh sáng trên gương phẳng',
+                chapter: 'Chủ đề Ánh sáng (KHTN 7)',
+                formulaHtml: 'Định luật phản xạ ánh sáng: Góc phản xạ bằng góc tới (<span class="phys-formula">i\' = i</span>).',
+                realKit: {
+                    name: 'Bộ thí nghiệm Phản xạ ánh sáng với gương phẳng và bảng chia độ (KHTN7-PXAS)',
+                    items: ['01 gương phẳng có giá đỡ', '01 bảng nửa hình tròn chia độ có thể xoay mặt phẳng', '01 đèn laser 1 tia'],
+                    setupNote: 'Chiếu tia sáng sát mặt bảng tới tâm gương và bẻ nửa bảng bên phải để kiểm chứng tính đồng phẳng.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Bending Light (Phần Phản xạ trên mặt gương)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/bending-light',
+                    coachActivity: 'Đo góc tới i và góc phản xạ i\' trên bảng lượng giác ảo.'
+                },
+                video: {
+                    title: 'Video hướng dẫn TN phản xạ ánh sáng & Ứng dụng gương cầu, kính tiềm vọng',
+                    phenomenon: 'Hiện tượng bóng cây soi xuống mặt hồ phẳng lặng như một chiếc gương tự nhiên.'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng đo góc phản xạ i\' ứng với i = 20°, 40°, 60° và vẽ đường đi tia sáng.',
+                stemTopic: 'Chế tạo Kính tiềm vọng quan sát vượt chướng ngại vật từ bìa carton và 2 gương phẳng',
+                simConfig: {
+                    s1Label: 'Góc tới i (độ):', s1Min: 10, s1Max: 80, s1Step: 10, s1Val: 40, s1Unit: '°',
+                    s2Label: 'Hệ số phản xạ gương:', s2Min: 1, s2Max: 1, s2Step: 1, s2Val: 1, s2Unit: '',
+                    mode: 'refraction'
+                }
+            },
+            {
+                id: 'vl11_b9',
+                grade: 'Vật lí 11',
+                title: 'Bài 9: Sóng dừng trên dây đàn hồi',
+                chapter: 'Chương II: Sóng (Vật lí 11)',
+                formulaHtml: 'Điều kiện sóng dừng hai đầu cố định: <span class="phys-formula">L = k · (λ / 2) = k · v / (2f)</span> (với <span class="phys-var">k</span> = 1, 2, 3... là số bụng sóng)',
+                realKit: {
+                    name: 'Bộ thí nghiệm Sóng dừng trên dây đàn hồi với máy phát tần số (VL11-SD)',
+                    items: ['01 máy phát tần số âm thanh hiện số', '01 bộ rung điện từ + dây đàn hồi có ròng rọc treo quả nặng', '01 thước đo chiều dài bụng sóng'],
+                    setupNote: 'Điều chỉnh tần số f từ 20 Hz đến 120 Hz để xuất hiện rõ 1, 2, 3, 4 bó sóng ổn định.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Wave on a String (Sóng trên dây)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/wave-on-a-string',
+                    coachActivity: 'Đo bước sóng λ và tính tốc độ truyền sóng v = λ·f trên phần mềm Coach 7.'
+                },
+                video: {
+                    title: 'Video quay chậm (Slow-motion) bụng sóng và nút sóng trên dây đàn Guitar',
+                    phenomenon: 'Tại sao người nghệ sĩ bấm phím đàn ở các vị trí khác nhau lại tạo ra các nốt nhạc cao thấp khác nhau?'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng ghi tần số f theo số bụng sóng k và xác định tốc độ truyền sóng v.',
+                stemTopic: 'Thiết kế Nhạc cụ một dây (Đàn bầu mini) định chuẩn tần số bằng app phyphox Audio Spectrum',
+                simConfig: {
+                    s1Label: 'Tần số rung f (Hz):', s1Min: 20, s1Max: 100, s1Step: 20, s1Val: 40, s1Unit: 'Hz',
+                    s2Label: 'Số bụng sóng (k):', s2Min: 1, s2Max: 5, s2Step: 1, s2Val: 2, s2Unit: 'bụng',
+                    mode: 'pressure'
+                }
+            },
+            {
+                id: 'vl12_b14',
+                grade: 'Vật lí 12',
+                title: 'Bài 14: Cảm ứng từ và Lực từ tác dụng lên đoạn dây dẫn mang dòng điện',
+                chapter: 'Chương III: Từ trường (Vật lí 12)',
+                formulaHtml: '<span class="phys-formula">F = B · I · L · sin(α)</span> (quy tắc bàn tay trái xác định chiều lực từ <span class="phys-var">F</span>)',
+                realKit: {
+                    name: 'Bộ thí nghiệm Cân dòng điện đo lực từ và cảm ứng từ B (VL12-LT)',
+                    items: ['01 khung dây dẫn đặt trong từ trường đều của nam châm chữ U', '01 lực kế nhạy / cân điện tử đo lực từ F', '01 nguồn điện DC kèm Ampe kế'],
+                    setupNote: 'Thay đổi cường độ dòng điện I qua khung dây và đọc độ biến thiên lực từ F.'
+                },
+                simulation: {
+                    name: 'Mô phỏng PhET: Faraday\'s Electromagnetic Lab (Phòng TN Điện từ Faraday)',
+                    phetUrl: 'https://phet.colorado.edu/vi/simulations/faradays-law',
+                    coachActivity: 'Dùng cảm biến từ kế (Magnetometer) trên điện thoại đo cảm ứng từ B quanh nam châm.'
+                },
+                video: {
+                    title: 'Video TN khung dây nhảy trong từ trường & Nguyên lý loa điện động, động cơ điện',
+                    phenomenon: 'Giải thích cách màng loa dao động phát ra âm thanh khi có dòng điện âm tần chạy qua cuộn dây.'
+                },
+                worksheetSummary: 'Phiếu học tập: Bảng đo lực từ F theo cường độ dòng điện I và xác định độ lớn cảm ứng từ B.',
+                stemTopic: 'Chế tạo Động cơ điện một chiều đơn giản (Homopolar Motor) hoặc Loa giấy tự chế',
+                simConfig: {
+                    s1Label: 'Cường độ dòng điện I (A):', s1Min: 0.5, s1Max: 5.0, s1Step: 0.5, s1Val: 2.0, s1Unit: 'A',
+                    s2Label: 'Cảm ứng từ B (mT):', s2Min: 20, s2Max: 100, s2Step: 20, s2Val: 50, s2Unit: 'mT',
+                    mode: 'ohm'
+                }
+            }
+        ];
+
+        const allLessons = [...lessonsDatabase, ...extraGradeLessons];
+
+        // 5. Kho KHBD đã lưu
+        let savedRepository = [
+            {
+                id: 'repo_1',
+                lessonId: 'khtn8_b15',
+                title: 'Bài 15: Áp suất trên một bề mặt',
+                grade: 'KHTN 8',
+                book: 'Kết nối tri thức',
+                className: 'Lớp 8A1',
+                template: '5512',
+                lang: 'VI',
+                date: '07/11/2026',
+                materialsTag: ['Bộ thí nghiệm', 'Mô phỏng PhET', 'Video', 'Phiếu HT']
+            },
+            {
+                id: 'repo_2',
+                lessonId: 'khtn8_b17',
+                title: 'Bài 17: Lực đẩy Archimedes (Chế tạo Tàu ngầm mini)',
+                grade: 'KHTN 8',
+                book: 'Kết nối tri thức',
+                className: 'CLB STEM 8-9',
+                template: 'STEM',
+                lang: 'VI',
+                date: '05/11/2026',
+                materialsTag: ['Bộ kit STEM', 'Mô phỏng Buoyancy', 'Phiếu thiết kế']
+            },
+            {
+                id: 'repo_3',
+                lessonId: 'khtn9_b11',
+                title: 'Bài 11: Điện trở. Định luật Ohm (Ohm\'s Law - CLIL)',
+                grade: 'KHTN 9',
+                book: 'Kết nối tri thức',
+                className: 'Lớp 9A2',
+                template: '5512',
+                lang: 'EN',
+                date: '02/11/2026',
+                materialsTag: ['Bộ TN Định luật Ohm', 'Coach 7 & PhET', 'English / CLIL']
+            }
+        ];
+
+        // State hiện tại
+        let currentState = {
+            selectedClassId: '8A1',
+            selectedGrade: 'KHTN 8',
+            selectedLessonId: 'khtn8_b15',
+            selectedTemplate: '5512',
+            selectedLang: 'VI',
+            isDarkMode: false,
+            isLoggedIn: true,
+            userName: 'GV. Khoa Vật lí',
+            userEmail: 'gv.vatli@hnue.edu.vn',
+            simLogCounter: 0
+        };
+
+        // =================================================================
+        // QUẢN LÝ HỒ SƠ LỚP (5 TRƯỜNG THÔNG TIN) & DROPDOWN LỚP NGẮN GỌN
+        // =================================================================
+        function populateClassDropdown() {
+            const select = document.getElementById('classSelect');
+            select.innerHTML = '';
+            classProfiles.forEach(cls => {
+                const opt = document.createElement('option');
+                opt.value = cls.id;
+                // Chỉ hiển thị ngắn gọn Tên lớp + Sĩ số để không bị tràn chữ
+                opt.textContent = `${cls.name} (${cls.size} HS)`;
+                if (cls.id === currentState.selectedClassId) opt.selected = true;
+                select.appendChild(opt);
+            });
+            document.getElementById('classCountBadge').textContent = classProfiles.length;
+            updateClassSummaryBanner();
+        }
+
+        function onClassChange() {
+            currentState.selectedClassId = document.getElementById('classSelect').value;
+            updateClassSummaryBanner();
+            renderKHBDAndWorksheet();
+        }
+
+        function hasSpecialNeed(cls) {
+            if (!cls || !cls.specialNeeds) return false;
+            const norm = cls.specialNeeds.trim().toLowerCase();
+            return norm !== '' && norm !== 'không có' && norm !== 'không' && norm !== 'none';
+        }
+
+        function updateClassSummaryBanner() {
+            const cls = classProfiles.find(c => c.id === currentState.selectedClassId) || classProfiles[0];
+            const summaryEl = document.getElementById('classProfileSummary');
+            if (!cls || !summaryEl) return;
+
+            const equipBadges = (cls.equipments && cls.equipments.length > 0)
+                ? cls.equipments.map(eq => `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-semibold text-slate-700"><i class="fa-solid fa-check text-emerald-600 text-[10px]"></i> ${eq}</span>`).join('')
+                : `<span class="text-slate-400 italic">Chưa tích chọn thiết bị</span>`;
+
+            const specialNeedHtml = hasSpecialNeed(cls)
+                ? `<div class="flex items-start gap-1.5 text-amber-900 bg-amber-50/90 border border-amber-200 rounded-lg px-2.5 py-1.5">
+                       <i class="fa-solid fa-universal-access text-amber-600 mt-0.5 shrink-0"></i>
+                       <span><strong>Nhu cầu đặc biệt:</strong> ${cls.specialNeeds}</span>
+                   </div>`
+                : `<div class="text-slate-600"><strong class="text-slate-800">• Nhu cầu đặc biệt:</strong> Không có</div>`;
+
+            summaryEl.innerHTML = `
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="font-extrabold text-slate-900 mr-1"><i class="fa-solid fa-toolbox text-hnue-600 mr-1"></i>Thiết bị có sẵn (${cls.equipments.length}):</span>
+                        ${equipBadges}
+                    </div>
+                    <button type="button" onclick="switchMainTab('classes')" class="text-hnue-700 hover:underline font-bold shrink-0">
+                        Quản lý tất cả lớp (${classProfiles.length}) →
+                    </button>
+                </div>
+                ${specialNeedHtml}
+                <div class="text-slate-600 leading-relaxed">
+                    <strong class="text-slate-800">• Lưu ý đặc biệt khác:</strong> ${cls.otherNotes || 'Không có lưu ý thêm.'}
+                </div>
+            `;
+        }
+
+        // Render danh sách thẻ Hồ sơ lớp trong Tab "Hồ sơ lớp"
+        function renderClassCardsGrid() {
+            const grid = document.getElementById('classCardsGrid');
+            if (!grid) return;
+            document.getElementById('classCountBadge').textContent = classProfiles.length;
+
+            grid.innerHTML = classProfiles.map(cls => {
+                const isSelected = cls.id === currentState.selectedClassId;
+                const showSpecial = hasSpecialNeed(cls);
+
+                const equipTags = (cls.equipments && cls.equipments.length > 0)
+                    ? cls.equipments.map(eq => `
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
+                            <i class="fa-solid fa-square-check text-emerald-600"></i> ${eq}
+                        </span>
+                    `).join('')
+                    : `<span class="text-xs text-slate-400 italic">Chưa tích chọn thiết bị có sẵn</span>`;
+
+                return `
+                    <div class="p-5 rounded-2xl border-2 ${isSelected ? 'border-emerald-600 bg-emerald-50/15' : 'border-slate-200 bg-slate-50/50'} flex flex-col justify-between gap-4 transition-all shadow-2xs">
+                        <div class="space-y-3">
+                            <!-- Header Thẻ lớp: Tên lớp + Sĩ số -->
+                            <div class="flex items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="text-lg font-extrabold text-slate-900">${cls.name}</span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-hnue-100 text-hnue-800">
+                                        Sĩ số: ${cls.size} HS
+                                    </span>
+                                </div>
+                                ${isSelected ? '<span class="text-xs font-extrabold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">✓ Đang chọn</span>' : ''}
+                            </div>
+
+                            <!-- Nhóm 3: Thiết bị có sẵn (Tickbox) -->
+                            <div class="space-y-1.5">
+                                <div class="text-xs font-extrabold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                                    <i class="fa-solid fa-screwdriver-wrench text-hnue-600"></i>
+                                    <span>Thiết bị có sẵn (${cls.equipments.length}):</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5">
+                                    ${equipTags}
+                                </div>
+                            </div>
+
+                            <!-- Nhóm 4: Nhu cầu đặc biệt (Học sinh khiếm khuyết,...) -->
+                            <div class="p-3 rounded-xl border ${showSpecial ? 'bg-amber-50/80 border-amber-200 text-amber-900' : 'bg-white border-slate-200 text-slate-600'} text-xs space-y-0.5">
+                                <div class="font-extrabold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-universal-access ${showSpecial ? 'text-amber-600' : 'text-slate-400'}"></i>
+                                    <span>Nhu cầu đặc biệt:</span>
+                                </div>
+                                <p class="leading-relaxed">${cls.specialNeeds || 'Không có'}</p>
+                            </div>
+
+                            <!-- Nhóm 5: Một vài lưu ý đặc biệt khác -->
+                            <div class="text-xs text-slate-700 bg-white p-3 rounded-xl border border-slate-200 space-y-0.5">
+                                <div class="font-extrabold text-slate-900 flex items-center gap-1.5">
+                                    <i class="fa-regular fa-note-sticky text-hnue-600"></i>
+                                    <span>Lưu ý đặc biệt khác:</span>
+                                </div>
+                                <p class="leading-relaxed text-slate-600">${cls.otherNotes || 'Không có lưu ý thêm.'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Các nút thao tác trên Thẻ lớp -->
+                        <div class="flex items-center justify-between gap-2 pt-3 border-t border-slate-200">
+                            <button type="button" onclick="selectClassAndGoToCompose('${cls.id}')" class="px-3.5 py-2 rounded-xl bg-hnue-700 hover:bg-hnue-800 text-white text-xs font-bold transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-pen-ruler"></i>
+                                <span>Dùng để soạn bài</span>
+                            </button>
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" onclick="openClassModalForEdit('${cls.id}')" class="px-3 py-2 rounded-xl border border-slate-300 hover:border-hnue-500 bg-white text-xs font-bold text-slate-700 hover:text-hnue-700 transition flex items-center gap-1">
+                                    <i class="fa-regular fa-pen-to-square"></i> Chỉnh sửa
+                                </button>
+                                <button type="button" onclick="deleteClassProfile('${cls.id}')" class="px-2.5 py-2 rounded-xl border border-slate-300 hover:bg-rose-50 hover:text-rose-600 text-xs font-bold text-slate-500 transition" title="Xóa hồ sơ lớp">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectClassAndGoToCompose(classId) {
+            currentState.selectedClassId = classId;
+            populateClassDropdown();
+            renderClassCardsGrid();
+            renderKHBDAndWorksheet();
+            switchMainTab('create');
+            showToast('Đã chọn lớp để soạn Kế hoạch bài dạy!');
+        }
+
+        function fillSpecialNeedPreset(text) {
+            document.getElementById('newClassSpecialNeeds').value = text;
+        }
+
+        function setEquipCheckboxesInModal(selectedList) {
+            const checkboxes = document.querySelectorAll('input[name="classEquipItem"]');
+            checkboxes.forEach(cb => {
+                cb.checked = selectedList.includes(cb.value);
+            });
+        }
+
+        function getSelectedEquipCheckboxesFromModal() {
+            const checkboxes = document.querySelectorAll('input[name="classEquipItem"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        function openClassModalForAdd() {
+            document.getElementById('editingClassId').value = '';
+            document.getElementById('classModalTitle').innerHTML = '<i class="fa-solid fa-users-rectangle text-emerald-600"></i><span>Thêm Hồ sơ lớp học mới</span>';
+            document.getElementById('newClassName').value = '';
+            document.getElementById('newClassSize').value = '40';
+            setEquipCheckboxesInModal([
+                'Máy chiếu / Tivi thông minh',
+                'Mạng Internet / Wifi lớp học',
+                'Bộ thí nghiệm biểu diễn của Giáo viên',
+                'Bảng phụ / Phiếu học tập nhóm'
+            ]);
+            document.getElementById('newClassSpecialNeeds').value = 'Không có';
+            document.getElementById('newClassOtherNotes').value = '';
+            toggleModal('addClassModal', true);
+        }
+
+        function openClassModalForEdit(classId) {
+            const cls = classProfiles.find(c => c.id === classId) || classProfiles[0];
+            if (!cls) return;
+            document.getElementById('editingClassId').value = cls.id;
+            document.getElementById('classModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-hnue-600"></i><span>Chỉnh sửa Hồ sơ: ${cls.name}</span>`;
+            document.getElementById('newClassName').value = cls.name;
+            document.getElementById('newClassSize').value = cls.size;
+            setEquipCheckboxesInModal(cls.equipments || []);
+            document.getElementById('newClassSpecialNeeds').value = cls.specialNeeds || 'Không có';
+            document.getElementById('newClassOtherNotes').value = cls.otherNotes || '';
+            toggleModal('addClassModal', true);
+        }
+
+        function saveNewClassProfile() {
+            const editingId = document.getElementById('editingClassId').value;
+            const name = document.getElementById('newClassName').value.trim();
+            const size = parseInt(document.getElementById('newClassSize').value) || 40;
+            const equipments = getSelectedEquipCheckboxesFromModal();
+            const specialNeeds = document.getElementById('newClassSpecialNeeds').value.trim() || 'Không có';
+            const otherNotes = document.getElementById('newClassOtherNotes').value.trim() || 'Học sinh tích cực tham gia hoạt động thực nghiệm.';
+
+            if (!name) {
+                showToast('Vui lòng nhập Tên lớp (VD: Lớp 8A2)!');
+                return;
+            }
+
+            if (editingId) {
+                const idx = classProfiles.findIndex(c => c.id === editingId);
+                if (idx !== -1) {
+                    classProfiles[idx].name = name;
+                    classProfiles[idx].size = size;
+                    classProfiles[idx].equipments = equipments;
+                    classProfiles[idx].specialNeeds = specialNeeds;
+                    classProfiles[idx].otherNotes = otherNotes;
+                }
+                showToast(`Đã cập nhật hồ sơ "${name}"!`);
+            } else {
+                const newId = 'CLS_' + Date.now();
+                classProfiles.push({
+                    id: newId,
+                    name: name,
+                    size: size,
+                    equipments: equipments,
+                    specialNeeds: specialNeeds,
+                    otherNotes: otherNotes
+                });
+                currentState.selectedClassId = newId;
+                showToast(`Đã thêm hồ sơ "${name}"!`);
+            }
+
+            populateClassDropdown();
+            renderClassCardsGrid();
+            renderKHBDAndWorksheet();
+            toggleModal('addClassModal', false);
+        }
+
+        function deleteClassProfile(classId) {
+            if (classProfiles.length <= 1) {
+                showToast('Cần giữ lại ít nhất 1 hồ sơ lớp học!');
+                return;
+            }
+            classProfiles = classProfiles.filter(c => c.id !== classId);
+            if (currentState.selectedClassId === classId) {
+                currentState.selectedClassId = classProfiles[0].id;
+            }
+            populateClassDropdown();
+            renderClassCardsGrid();
+            renderKHBDAndWorksheet();
+            showToast('Đã xóa hồ sơ lớp.');
+        }
+
+        // =================================================================
+        // BÀI HỌC, MẪU SOẠN BÀI & HỌC LIỆU
+        // =================================================================
+        function onGradeChange() {
+            currentState.selectedGrade = document.getElementById('gradeSelect').value;
+            populateLessonDropdown();
+            onLessonChange();
+        }
+
+        function populateLessonDropdown() {
+            const lessonSelect = document.getElementById('lessonSelect');
+            const grade = currentState.selectedGrade;
+            lessonSelect.innerHTML = '';
+
+            const filtered = grade === 'ALL'
+                ? lessonsDatabase
+                : allLessons.filter(l => l.grade === grade);
+
+            filtered.forEach(lesson => {
+                const opt = document.createElement('option');
+                opt.value = lesson.id;
+                opt.textContent = `[${lesson.grade}] ${lesson.title}`;
+                if (lesson.id === currentState.selectedLessonId) opt.selected = true;
+                lessonSelect.appendChild(opt);
+            });
+
+            if (filtered.length > 0 && !filtered.some(l => l.id === currentState.selectedLessonId)) {
+                currentState.selectedLessonId = filtered[0].id;
+                lessonSelect.value = currentState.selectedLessonId;
+            }
+        }
+
+        function onLessonChange() {
+            currentState.selectedLessonId = document.getElementById('lessonSelect').value;
+            updateMaterialPreview();
+            setupInteractiveSimForCurrentLesson();
+            renderKHBDAndWorksheet();
+        }
+
+        function getCurrentLesson() {
+            return allLessons.find(l => l.id === currentState.selectedLessonId) || lessonsDatabase[0];
+        }
+
+        function selectTemplate(tpl) {
+            currentState.selectedTemplate = tpl;
+            const btn5512 = document.getElementById('tplBtn5512');
+            const btnSTEM = document.getElementById('tplBtnSTEM');
+            const chk5512 = document.getElementById('tplCheck5512');
+            const chkSTEM = document.getElementById('tplCheckSTEM');
+
+            if (tpl === '5512') {
+                btn5512.className = 'relative p-5 rounded-2xl border-2 border-hnue-600 bg-hnue-50/70 text-left transition-all flex items-start justify-between gap-3 shadow-sm';
+                btnSTEM.className = 'relative p-5 rounded-2xl border-2 border-slate-300 bg-white hover:border-slate-400 text-left transition-all flex items-start justify-between gap-3';
+                chk5512.className = 'w-6 h-6 rounded-full bg-hnue-600 text-white flex items-center justify-center text-xs shrink-0';
+                chkSTEM.className = 'w-6 h-6 rounded-full border-2 border-slate-300 text-transparent flex items-center justify-center text-xs shrink-0';
+            } else {
+                btnSTEM.className = 'relative p-5 rounded-2xl border-2 border-hnue-600 bg-hnue-50/70 text-left transition-all flex items-start justify-between gap-3 shadow-sm';
+                btn5512.className = 'relative p-5 rounded-2xl border-2 border-slate-300 bg-white hover:border-slate-400 text-left transition-all flex items-start justify-between gap-3';
+                chkSTEM.className = 'w-6 h-6 rounded-full bg-hnue-600 text-white flex items-center justify-center text-xs shrink-0';
+                chk5512.className = 'w-6 h-6 rounded-full border-2 border-slate-300 text-transparent flex items-center justify-center text-xs shrink-0';
+            }
+            renderKHBDAndWorksheet();
+        }
+
+        function updateMaterialPreview() {
+            const lesson = getCurrentLesson();
+            const useKit = document.getElementById('chkKit').checked;
+            const useSim = document.getElementById('chkSim').checked;
+            const useVideo = document.getElementById('chkVideo').checked;
+            const useImage = document.getElementById('chkImage').checked;
+
+            document.getElementById('chkKitSub').textContent = lesson.realKit.name;
+            document.getElementById('chkSimSub').textContent = lesson.simulation.name;
+            document.getElementById('chkVideoSub').textContent = lesson.video.title;
+            document.getElementById('chkImageSub').textContent = lesson.worksheetSummary;
+
+            const box = document.getElementById('recommendedMaterialsBox');
+            let cardsHtml = '';
+
+            if (useKit) {
+                cardsHtml += `
+                    <div class="bg-white rounded-xl p-3.5 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="text-xs font-extrabold text-emerald-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-screwdriver-wrench"></i>
+                                <span>BỘ THÍ NGHIỆM: ${lesson.realKit.name}</span>
+                            </div>
+                            <div class="text-xs text-slate-600">
+                                <strong>Dụng cụ:</strong> ${lesson.realKit.items.join(' • ')}.
+                            </div>
+                        </div>
+                        <button type="button" onclick="switchResultTab('worksheet'); document.getElementById('resultContainer').scrollIntoView({behavior:'smooth'});" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold shrink-0">
+                            Phiếu HT Thực hành
+                        </button>
+                    </div>
+                `;
+            }
+
+            if (useSim) {
+                cardsHtml += `
+                    <div class="bg-white rounded-xl p-3.5 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="text-xs font-extrabold text-hnue-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-laptop-code"></i>
+                                <span>MÔ PHỎNG: ${lesson.simulation.name}</span>
+                            </div>
+                            <div class="text-xs text-slate-600">
+                                <strong>Hoạt động:</strong> ${lesson.simulation.coachActivity}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button type="button" onclick="switchResultTab('sim'); document.getElementById('resultContainer').scrollIntoView({behavior:'smooth'});" class="px-3 py-1.5 rounded-lg bg-hnue-600 hover:bg-hnue-700 text-white text-xs font-bold">
+                                Mô phỏng trực tiếp
+                            </button>
+                            <a href="${lesson.simulation.phetUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-hnue-800 border border-blue-200 text-xs font-bold">
+                                PhET <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-0.5"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (useVideo) {
+                cardsHtml += `
+                    <div class="bg-white rounded-xl p-3.5 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="text-xs font-extrabold text-amber-900 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-play text-amber-600"></i>
+                                <span>VIDEO: ${lesson.video.title}</span>
+                            </div>
+                            <div class="text-xs text-slate-600">
+                                <strong>Hiện tượng mở đầu:</strong> ${lesson.video.phenomenon}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (useImage) {
+                cardsHtml += `
+                    <div class="bg-white rounded-xl p-3.5 border border-purple-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="text-xs font-extrabold text-purple-900 flex items-center gap-1.5">
+                                <i class="fa-solid fa-table-list text-purple-600"></i>
+                                <span>HÌNH ẢNH SƠ ĐỒ & PHIẾU HỌC TẬP:</span>
+                            </div>
+                            <div class="text-xs text-slate-600">
+                                ${lesson.worksheetSummary} (${lesson.formulaHtml})
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (!cardsHtml) {
+                cardsHtml = `<div class="text-center py-3 text-xs text-slate-500">Hãy tích chọn ít nhất 1 mục học liệu ở trên.</div>`;
+            }
+
+            box.innerHTML = cardsHtml;
+        }
+
+        // =================================================================
+        // SINH KHBD & PHIẾU HỌC TẬP (KÈM LOADING TẠI CHỖ)
+        // =================================================================
+        function triggerGenerateKHBD() {
+            const loadingBox = document.getElementById('inlineLoadingBox');
+            const loadingBar = document.getElementById('loadingBar');
+            const loadingPercent = document.getElementById('loadingPercent');
+            const btn = document.getElementById('generateBtn');
+
+            loadingBox.classList.remove('hidden');
+            btn.disabled = true;
+            btn.classList.add('opacity-75');
+            loadingBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            loadingBar.style.width = '40%';
+            loadingPercent.textContent = '40%';
+
+            setTimeout(() => {
+                loadingBar.style.width = '85%';
+                loadingPercent.textContent = '85%';
+            }, 350);
+
+            setTimeout(() => {
+                loadingBox.classList.add('hidden');
+                btn.disabled = false;
+                btn.classList.remove('opacity-75');
+                renderKHBDAndWorksheet();
+                switchResultTab('khbd');
+                document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                showToast('Đã tạo Kế hoạch bài dạy & Phiếu học tập!');
+            }, 750);
+        }
+
+        function renderKHBDAndWorksheet() {
+            const lesson = getCurrentLesson();
+            const cls = classProfiles.find(c => c.id === currentState.selectedClassId) || classProfiles[0];
+            const book = document.getElementById('bookSelect').value;
+            const customNote = document.getElementById('customNoteInput').value.trim();
+
+            const useKit = document.getElementById('chkKit').checked;
+            const useSim = document.getElementById('chkSim').checked;
+            const useVideo = document.getElementById('chkVideo').checked;
+            const useImage = document.getElementById('chkImage').checked;
+
+            const isSTEM = currentState.selectedTemplate === 'STEM';
+            const isEN = currentState.selectedLang === 'EN';
+
+            const equipListStr = (cls.equipments && cls.equipments.length > 0)
+                ? cls.equipments.join(', ')
+                : 'Sử dụng thiết bị cơ bản của lớp học';
+
+            const hasGroupKit = cls.equipments && cls.equipments.some(e => e.includes('thực hành nhóm'));
+            const teachingMethodAuto = hasGroupKit
+                ? `Chia lớp (${cls.size} HS) thành 6-8 nhóm thực hành trực tiếp trên bộ thiết bị thật kết hợp đối chiếu mô phỏng.`
+                : `Giáo viên tiến hành thí nghiệm biểu diễn kết hợp trình chiếu mô phỏng tương tác trên màn chiếu lớn để học sinh quan sát và ghi số liệu vào Phiếu học tập.`;
+
+            const specialSupportPlan = hasSpecialNeed(cls)
+                ? `<strong>Hỗ trợ học sinh có nhu cầu đặc biệt (${cls.specialNeeds}):</strong> Bố trí vị trí ngồi thuận lợi gần khu vực quan sát thí nghiệm, chuẩn bị học liệu/Phiếu học tập điều chỉnh phù hợp và phân công bạn cùng nhóm hỗ trợ thao tác thực hành.`
+                : `<strong>Hỗ trợ học sinh có nhu cầu đặc biệt:</strong> Không có học sinh khuyết tật/nhu cầu đặc biệt; giáo viên bao quát đều các nhóm.`;
+
+            let khbdHtml = `
+                <div class="border-b-2 border-slate-800 pb-4 text-center space-y-1">
+                    <div class="text-xs font-bold uppercase tracking-wider text-hnue-700">
+                        ${isSTEM ? 'KẾ HOẠCH BÀI DẠY CHỦ ĐỀ STEM' : 'KẾ HOẠCH BÀI DẠY (CÔNG VĂN 5512)'}
+                        ${isEN ? ' — BILINGUAL / CLIL EDITION' : ''}
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 uppercase">
+                        ${lesson.title}
+                    </h2>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-600">
+                        Lớp: <strong>${cls.name} (Sĩ số: ${cls.size} HS)</strong> • Khối: <strong>${lesson.grade}</strong> • SGK: <strong>${book}</strong>
+                    </p>
+                </div>
+
+                <!-- Hộp thông tin Hồ sơ lớp tích hợp vào KHBD -->
+                <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4 text-xs sm:text-sm space-y-1.5">
+                    <div class="font-extrabold text-hnue-900 uppercase tracking-wide text-xs">THÔNG TIN HỒ SƠ ${cls.name.toUpperCase()} & ĐIỀU KIỆN THỰC TẾ:</div>
+                    <div>• <strong>Thiết bị có sẵn tại lớp:</strong> ${equipListStr}.</div>
+                    <div>• <strong>Nhu cầu đặc biệt:</strong> <span class="${hasSpecialNeed(cls) ? 'text-amber-800 font-bold' : ''}">${cls.specialNeeds}</span>.</div>
+                    <div>• <strong>Lưu ý đặc biệt khác:</strong> ${cls.otherNotes}</div>
+                    ${customNote ? `<div class="text-hnue-800 font-semibold">• <strong>Ghi chú bổ sung tiết dạy:</strong> ${sanitizePhysicsText(customNote)}</div>` : ''}
+                </div>
+
+                <div class="space-y-2">
+                    <h3 class="text-base sm:text-lg font-extrabold text-hnue-900 uppercase">I. MỤC TIÊU BÀI DẠY</h3>
+                    <ul class="list-disc pl-5 text-sm space-y-1">
+                        <li><strong>Nhận thức KHTN / Vật lí:</strong> Nêu được định nghĩa và biểu thức ${lesson.formulaHtml}.</li>
+                        <li><strong>Tìm hiểu tự nhiên qua thực nghiệm:</strong> Tiến hành thí nghiệm với dụng cụ thực tế hoặc mô phỏng để thu thập số liệu vào <em>Phiếu học tập</em>.</li>
+                        <li><strong>Vận dụng:</strong> Giải thích hiện tượng (${lesson.video.phenomenon}) ${isSTEM ? `và thiết kế sản phẩm: <strong>${lesson.stemTopic}</strong>` : ''}.</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-2">
+                    <h3 class="text-base sm:text-lg font-extrabold text-hnue-900 uppercase">II. THIẾT BỊ DẠY HỌC VÀ HỌC LIỆU</h3>
+                    <ul class="list-disc pl-5 text-sm space-y-1">
+                        <li><strong>Thiết bị có sẵn của ${cls.name}:</strong> ${equipListStr}.</li>
+                        ${useKit ? `<li><strong>Bộ thí nghiệm chuyên đề:</strong> ${lesson.realKit.name} (${lesson.realKit.items.join(', ')}).</li>` : ''}
+                        ${useSim ? `<li><strong>Mô phỏng tương tác:</strong> ${lesson.simulation.name} (<a href="${lesson.simulation.phetUrl}" target="_blank" class="text-hnue-700 underline">Link PhET</a>).</li>` : ''}
+                        ${useVideo ? `<li><strong>Video hướng dẫn & hiện tượng:</strong> ${lesson.video.title}.</li>` : ''}
+                        ${useImage ? `<li><strong>Hình ảnh & Phiếu học tập:</strong> ${lesson.worksheetSummary}.</li>` : ''}
+                    </ul>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-base sm:text-lg font-extrabold text-hnue-900 uppercase">
+                        III. TIẾN TRÌNH DẠY HỌC (${isSTEM ? 'CHUỖI 5 HOẠT ĐỘNG STEM' : '4 HOẠT ĐỘNG CÔNG VĂN 5512'})
+                    </h3>
+                    <div class="border border-slate-300 rounded-xl p-4 space-y-1.5 text-sm">
+                        <div class="font-extrabold text-hnue-800">HOẠT ĐỘNG 1: MỞ ĐẦU TỪ HIỆN TƯỢNG THỰC TẾ (10 phút)</div>
+                        <p>• GV chiếu tình huống/video: <em>${lesson.video.phenomenon}</em>.</p>
+                        <p>• HS thảo luận nhóm đôi và ghi dự đoán ban đầu vào Phần I của <strong>Phiếu học tập</strong>.</p>
+                    </div>
+
+                    <div class="border-2 border-hnue-600 bg-hnue-50/20 rounded-xl p-4 space-y-2 text-sm">
+                        <div class="font-extrabold text-hnue-900">HOẠT ĐỘNG 2: THÍ NGHIỆM KHẢO SÁT & HÌNH THÀNH KIẾN THỨC (40 phút)</div>
+                        <p>• <strong>Phương án tổ chức tại ${cls.name}:</strong> ${teachingMethodAuto}</p>
+                        <p>• <strong>Thao tác thí nghiệm:</strong> ${lesson.realKit.setupNote}</p>
+                        <div class="p-3 rounded-lg bg-amber-50/80 border border-amber-200 text-xs sm:text-sm space-y-1">
+                            <div>• ${specialSupportPlan}</div>
+                            <div>• <strong>Lưu ý quản lý lớp:</strong> ${cls.otherNotes}</div>
+                        </div>
+                        <p>• <strong>Báo cáo & Chốt kiến thức:</strong> Các nhóm hoàn thành bảng số liệu trong Phiếu học tập và rút ra quy luật ${lesson.formulaHtml}.</p>
+                    </div>
+
+                    <div class="border border-slate-300 rounded-xl p-4 space-y-1.5 text-sm">
+                        <div class="font-extrabold text-hnue-800">HOẠT ĐỘNG 3 & 4: LUYỆN TẬP – VẬN DỤNG ${isSTEM ? '– CHẾ TẠO SẢN PHẨM STEM' : ''} (40 phút)</div>
+                        <p>• HS xử lý bài tập định lượng từ số liệu đo được và thực hiện nhiệm vụ ứng dụng: <strong>${lesson.stemTopic}</strong>.</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('khbdDocumentContent').innerHTML = sanitizePhysicsText(khbdHtml);
+
+            let wsHtml = `
+                <div class="border-2 border-slate-800 rounded-xl p-6 space-y-4 bg-white">
+                    <div class="flex justify-between items-center border-b-2 border-slate-800 pb-3">
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-900 uppercase">PHIẾU HỌC TẬP: ${lesson.title.toUpperCase()}</h2>
+                            <p class="text-xs text-slate-600">Học liệu: ${useKit ? lesson.realKit.name : lesson.simulation.name}</p>
+                        </div>
+                        <div class="text-xs font-semibold border border-slate-400 rounded-lg px-3 py-1.5">
+                            Lớp: <strong>${cls.name} (${cls.size} HS)</strong> | Nhóm: ........
+                        </div>
+                    </div>
+                    ${hasSpecialNeed(cls) ? `<div class="text-xs bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 text-amber-900"><strong>Lưu ý in ấn/hỗ trợ:</strong> ${cls.specialNeeds}</div>` : ''}
+
+                    <div class="text-sm space-y-1.5">
+                        <div class="font-extrabold text-hnue-900">1. Câu hỏi dự đoán hiện tượng:</div>
+                        <p class="text-xs text-slate-700 italic">${lesson.video.phenomenon}</p>
+                        <div class="border-b border-dashed border-slate-400 py-2 text-xs text-slate-400">Dự đoán của nhóm: ...................................................................................................................</div>
+                    </div>
+
+                    <div class="text-sm space-y-2">
+                        <div class="font-extrabold text-hnue-900">2. Bảng ghi nhận kết quả thí nghiệm:</div>
+                        <table class="w-full border-collapse border border-slate-800 text-xs">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="border border-slate-800 p-2 text-center">Lần đo</th>
+                                    <th class="border border-slate-800 p-2 text-center">${lesson.simConfig.s1Label}</th>
+                                    <th class="border border-slate-800 p-2 text-center">${lesson.simConfig.s2Label}</th>
+                                    <th class="border border-slate-800 p-2 text-center">Kết quả đo</th>
+                                    <th class="border border-slate-800 p-2 text-center">Nhận xét</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border border-slate-800 p-2 text-center font-bold">Lần 1</td>
+                                    <td class="border border-slate-800 p-2 text-center">${lesson.simConfig.s1Val} ${lesson.simConfig.s1Unit}</td>
+                                    <td class="border border-slate-800 p-2 text-center">${lesson.simConfig.s2Val} ${lesson.simConfig.s2Unit}</td>
+                                    <td class="border border-slate-800 p-2 text-center">................</td>
+                                    <td class="border border-slate-800 p-2 text-center">................</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-slate-800 p-2 text-center font-bold">Lần 2</td>
+                                    <td class="border border-slate-800 p-2 text-center">${lesson.simConfig.s1Val * 2} ${lesson.simConfig.s1Unit}</td>
+                                    <td class="border border-slate-800 p-2 text-center">${lesson.simConfig.s2Val} ${lesson.simConfig.s2Unit}</td>
+                                    <td class="border border-slate-800 p-2 text-center">................</td>
+                                    <td class="border border-slate-800 p-2 text-center">................</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="text-sm space-y-1">
+                        <div class="font-extrabold text-hnue-900">3. Kết luận công thức vật lí:</div>
+                        <div class="p-2.5 rounded bg-slate-50 border border-slate-300 text-xs">${lesson.formulaHtml}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('worksheetDocumentContent').innerHTML = sanitizePhysicsText(wsHtml);
+        }
+
+        // =================================================================
+        // MÔ PHỎNG TƯƠNG TÁC TRỰC QUAN
+        // =================================================================
+        function setupInteractiveSimForCurrentLesson() {
+            const lesson = getCurrentLesson();
+            const cfg = lesson.simConfig;
+
+            document.getElementById('interactiveSimTitle').textContent = `Mô phỏng trực quan: ${lesson.title}`;
+            document.getElementById('externalSimLinks').innerHTML = `
+                <a href="${lesson.simulation.phetUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold flex items-center gap-1.5">
+                    <span>Mở PhET gốc</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+            `;
+
+            const s1 = document.getElementById('simSlider1');
+            const s2 = document.getElementById('simSlider2');
+            document.getElementById('simSlider1Label').textContent = cfg.s1Label;
+            document.getElementById('simSlider2Label').textContent = cfg.s2Label;
+
+            s1.min = cfg.s1Min; s1.max = cfg.s1Max; s1.step = cfg.s1Step; s1.value = cfg.s1Val;
+            s2.min = cfg.s2Min; s2.max = cfg.s2Max; s2.step = cfg.s2Step; s2.value = cfg.s2Val;
+
+            currentState.simLogCounter = 0;
+            document.getElementById('simDataLogBody').innerHTML = '';
+            runInteractiveSim();
+            recordSimDataPoint();
+        }
+
+        function runInteractiveSim() {
+            const lesson = getCurrentLesson();
+            const cfg = lesson.simConfig;
+            const v1 = parseFloat(document.getElementById('simSlider1').value);
+            const v2 = parseFloat(document.getElementById('simSlider2').value);
+
+            document.getElementById('simSlider1Val').textContent = `${v1} ${cfg.s1Unit}`;
+            document.getElementById('simSlider2Val').textContent = `${v2} ${cfg.s2Unit}`;
+
+            let resultStr = '';
+            let obsStr = '';
+            let svgHtml = '';
+
+            if (cfg.mode === 'pressure') {
+                const areaM2 = v2 * 0.01;
+                const p = Math.round(v1 / areaM2);
+                const indentCm = Math.min(4.2, ((v1 / v2) * 0.15)).toFixed(2);
+                resultStr = `p = F / S = ${p} Pa`;
+                obsStr = `Độ lún h = ${indentCm} cm`;
+
+                const blockWidth = 35 + v2 * 22;
+                const blockHeight = 55;
+                const sinkPx = Math.min(38, (v1 / v2) * 2.5);
+
+                svgHtml = `
+                    <svg width="360" height="180" viewBox="0 0 360 180" class="mx-auto">
+                        <rect x="40" y="105" width="280" height="60" rx="6" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/>
+                        <rect x="${180 - blockWidth/2}" y="105" width="${blockWidth}" height="${sinkPx}" fill="#0f172a"/>
+                        <rect x="${180 - blockWidth/2}" y="${105 - blockHeight + sinkPx}" width="${blockWidth}" height="${blockHeight}" rx="4" fill="#3b82f6" stroke="#93c5fd" stroke-width="2"/>
+                        <text x="180" y="${105 - blockHeight/2 + sinkPx + 4}" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">F = ${v1}N</text>
+                        <text x="275" y="98" fill="#38bdf8" font-size="12" font-weight="bold">h = ${indentCm} cm</text>
+                    </svg>
+                `;
+            } else if (cfg.mode === 'ohm') {
+                const I = (v1 / v2).toFixed(2);
+                resultStr = `I = U / R = ${I} A`;
+                obsStr = `Dòng điện I = ${I} A`;
+                svgHtml = `
+                    <svg width="360" height="170" viewBox="0 0 360 170" class="mx-auto">
+                        <rect x="50" y="30" width="260" height="105" rx="8" fill="none" stroke="#94a3b8" stroke-width="3"/>
+                        <rect x="145" y="15" width="70" height="28" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+                        <text x="180" y="33" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">U = ${v1}V</text>
+                        <rect x="135" y="120" width="90" height="28" rx="5" fill="#334155" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="180" y="138" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="bold">R = ${v2}Ω</text>
+                        <circle cx="50" cy="82" r="22" fill="#0f172a" stroke="#10b981" stroke-width="2.5"/>
+                        <text x="50" y="86" text-anchor="middle" fill="#34d399" font-size="11" font-weight="bold">${I}A</text>
+                    </svg>
+                `;
+            } else {
+                const ratio = (v1 / v2).toFixed(2);
+                resultStr = `Tỉ số = ${ratio}`;
+                obsStr = `Đáp ứng theo thông số thực nghiệm`;
+                svgHtml = `
+                    <svg width="360" height="170" viewBox="0 0 360 170" class="mx-auto">
+                        <rect x="30" y="20" width="300" height="130" rx="12" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+                        <line x1="65" y1="130" x2="300" y2="130" stroke="#64748b" stroke-width="2"/>
+                        <line x1="65" y1="130" x2="65" y2="35" stroke="#64748b" stroke-width="2"/>
+                        <line x1="65" y1="130" x2="${120 + (v1 / cfg.s1Max) * 160}" y2="${120 - (v2 / cfg.s2Max) * 70}" stroke="#38bdf8" stroke-width="3"/>
+                        <circle cx="${120 + (v1 / cfg.s1Max) * 160}" cy="${120 - (v2 / cfg.s2Max) * 70}" r="7" fill="#f59e0b"/>
+                    </svg>
+                `;
+            }
+
+            document.getElementById('simComputedResult').textContent = resultStr;
+            document.getElementById('simObservationText').textContent = obsStr;
+            document.getElementById('simVisualCanvas').innerHTML = svgHtml;
+        }
+
+        function recordSimDataPoint() {
+            const lesson = getCurrentLesson();
+            const cfg = lesson.simConfig;
+            const v1 = document.getElementById('simSlider1').value;
+            const v2 = document.getElementById('simSlider2').value;
+            const res = document.getElementById('simComputedResult').textContent;
+            const obs = document.getElementById('simObservationText').textContent;
+
+            currentState.simLogCounter++;
+            const tbody = document.getElementById('simDataLogBody');
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-slate-700/60';
+            tr.innerHTML = `
+                <td class="py-1.5 px-2 font-bold text-amber-300">Lần ${currentState.simLogCounter}</td>
+                <td class="py-1.5 px-2">${v1} ${cfg.s1Unit}</td>
+                <td class="py-1.5 px-2">${v2} ${cfg.s2Unit}</td>
+                <td class="py-1.5 px-2 font-semibold text-cyan-300">${res}</td>
+                <td class="py-1.5 px-2 text-slate-300">${obs}</td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function clearSimDataPoints() {
+            currentState.simLogCounter = 0;
+            document.getElementById('simDataLogBody').innerHTML = '';
+        }
+
+        // =================================================================
+        // ĐIỀU HƯỚNG 3 TAB SIDEBAR (SOẠN MỚI | KHO KHBD | HỒ SƠ LỚP)
+        // =================================================================
+        function switchMainTab(tab) {
+            const viewCreate = document.getElementById('viewCreate');
+            const viewRepo = document.getElementById('viewRepo');
+            const viewClasses = document.getElementById('viewClasses');
+
+            const navCreateBtn = document.getElementById('navCreateBtn');
+            const navRepoBtn = document.getElementById('navRepoBtn');
+            const navClassBtn = document.getElementById('navClassBtn');
+
+            viewCreate.classList.add('hidden');
+            viewRepo.classList.add('hidden');
+            viewClasses.classList.add('hidden');
+
+            const inactiveClass = 'w-full flex items-center justify-between px-4 py-3.5 rounded-xl font-bold text-left text-slate-700 hover:bg-slate-100 transition-all';
+            const activeClass = 'w-full flex items-center justify-between px-4 py-3.5 rounded-xl font-bold text-left transition-all bg-hnue-700 text-white shadow-sm';
+
+            navCreateBtn.className = inactiveClass;
+            navRepoBtn.className = inactiveClass;
+            navClassBtn.className = inactiveClass;
+
+            if (tab === 'create') {
+                viewCreate.classList.remove('hidden');
+                navCreateBtn.className = activeClass;
+            } else if (tab === 'repo') {
+                viewRepo.classList.remove('hidden');
+                navRepoBtn.className = activeClass;
+                renderRepoList();
+            } else if (tab === 'classes') {
+                viewClasses.classList.remove('hidden');
+                navClassBtn.className = activeClass;
+                renderClassCardsGrid();
+            }
+        }
+
+        // Quản lý Kho KHBD
+        function saveCurrentToRepo() {
+            const lesson = getCurrentLesson();
+            const cls = classProfiles.find(c => c.id === currentState.selectedClassId) || classProfiles[0];
+            const book = document.getElementById('bookSelect').value;
+
+            const tags = [];
+            if (document.getElementById('chkKit').checked) tags.push('Bộ thí nghiệm');
+            if (document.getElementById('chkSim').checked) tags.push('Mô phỏng');
+            if (document.getElementById('chkVideo').checked) tags.push('Video');
+            if (document.getElementById('chkImage').checked) tags.push('Hình ảnh & PHT');
+
+            savedRepository.unshift({
+                id: 'repo_' + Date.now(),
+                lessonId: lesson.id,
+                title: lesson.title,
+                grade: lesson.grade,
+                book: book,
+                className: cls.name,
+                template: currentState.selectedTemplate,
+                lang: currentState.selectedLang,
+                date: '07/11/2026',
+                materialsTag: tags
+            });
+
+            document.getElementById('repoCountBadge').textContent = savedRepository.length;
+            renderRepoList();
+            showToast(`Đã lưu "${lesson.title}" vào Kho KHBD!`);
+        }
+
+        function renderRepoList() {
+            const filter = document.getElementById('repoFilterSelect').value;
+            const container = document.getElementById('repoListContainer');
+            document.getElementById('repoCountBadge').textContent = savedRepository.length;
+
+            const list = filter === 'ALL'
+                ? savedRepository
+                : savedRepository.filter(item => item.template === filter);
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-sm text-slate-500">Chưa có bài soạn nào trong mục này.</div>`;
+                return;
+            }
+
+            container.innerHTML = list.map(item => `
+                <div class="p-4 rounded-xl border border-slate-200 hover:border-hnue-500 bg-slate-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+                    <div class="space-y-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-md text-xs font-extrabold ${item.template === 'STEM' ? 'bg-amber-100 text-amber-900' : 'bg-hnue-100 text-hnue-800'}">
+                                ${item.template === 'STEM' ? 'Chủ đề STEM' : 'CV 5512'}
+                            </span>
+                            <span class="text-xs font-bold text-slate-500">${item.grade} • ${item.book} • Lớp: ${item.className}</span>
+                        </div>
+                        <h3 class="text-base font-extrabold text-slate-900">${item.title}</h3>
+                        <div class="flex flex-wrap gap-1.5 pt-1">
+                            ${item.materialsTag.map(t => `<span class="px-2 py-0.5 rounded bg-white border border-slate-200 text-[11px] font-semibold text-slate-700">✓ ${t}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="openSavedLesson('${item.id}')" class="px-3.5 py-2 rounded-xl bg-hnue-700 hover:bg-hnue-800 text-white text-xs font-bold transition">
+                            Mở bài
+                        </button>
+                        <button onclick="deleteSavedLesson('${item.id}')" class="p-2 rounded-xl border border-slate-300 hover:bg-rose-50 hover:text-rose-600 text-slate-500 text-xs transition">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openSavedLesson(repoId) {
+            const item = savedRepository.find(r => r.id === repoId);
+            if (!item) return;
+            document.getElementById('gradeSelect').value = 'ALL';
+            currentState.selectedGrade = 'ALL';
+            populateLessonDropdown();
+            document.getElementById('lessonSelect').value = item.lessonId;
+            currentState.selectedLessonId = item.lessonId;
+            selectTemplate(item.template);
+            updateMaterialPreview();
+            setupInteractiveSimForCurrentLesson();
+            renderKHBDAndWorksheet();
+            switchMainTab('create');
+            document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteSavedLesson(repoId) {
+            savedRepository = savedRepository.filter(r => r.id !== repoId);
+            renderRepoList();
+            showToast('Đã xóa bài khỏi Kho KHBD.');
+        }
+
+        function switchResultTab(tab) {
+            const pKHBD = document.getElementById('panelKHBD');
+            const pWS = document.getElementById('panelWorksheet');
+            const pSim = document.getElementById('panelSim');
+
+            const bKHBD = document.getElementById('resTabKHBD');
+            const bWS = document.getElementById('resTabWorksheet');
+            const bSim = document.getElementById('resTabSim');
+
+            pKHBD.classList.add('hidden');
+            pWS.classList.add('hidden');
+            pSim.classList.add('hidden');
+
+            const inactiveCls = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5';
+            const activeCls = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-white text-hnue-800 shadow-sm transition-all flex items-center gap-1.5';
+
+            bKHBD.className = inactiveCls;
+            bWS.className = inactiveCls;
+            bSim.className = inactiveCls;
+
+            if (tab === 'khbd') {
+                pKHBD.classList.remove('hidden');
+                bKHBD.className = activeCls;
+            } else if (tab === 'worksheet') {
+                pWS.classList.remove('hidden');
+                bWS.className = activeCls;
+            } else {
+                pSim.classList.remove('hidden');
+                bSim.className = activeCls;
+                runInteractiveSim();
+            }
+        }
+
+        function copyCurrentOutput() {
+            const khbdText = document.getElementById('khbdDocumentContent').innerText;
+            const wsText = document.getElementById('worksheetDocumentContent').innerText;
+            const tempArea = document.createElement('textarea');
+            tempArea.value = khbdText + '\n\n====================\n\n' + wsText;
+            document.body.appendChild(tempArea);
+            tempArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempArea);
+            showToast('Đã sao chép Kế hoạch bài dạy & Phiếu học tập!');
+        }
+
+        function exportToWord(mode = 'all') {
+            const lesson = getCurrentLesson();
+            const khbdHtml = document.getElementById('khbdDocumentContent').innerHTML;
+            const wsHtml = document.getElementById('worksheetDocumentContent').innerHTML;
+
+            const bodyContent = mode === 'worksheet'
+                ? wsHtml
+                : `${khbdHtml}<br clear="all" style="page-break-before:always" />${wsHtml}`;
+
+            const fullWordDoc = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset="utf-8"><title>${lesson.title}</title></head>
+                <body style="font-family:'Times New Roman',serif;font-size:13pt;">${bodyContent}</body>
+                </html>
+            `;
+
+            const blob = new Blob(['\ufeff', fullWordDoc], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `ScienceLab_${lesson.id}.doc`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('Đã tải xuống file Word (.doc)!');
+        }
+
+        function toggleModal(modalId, show) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            if (show) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').textContent = msg;
+            toast.classList.remove('hidden');
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // =================================================================
+        // MENU HỒ SƠ CÁ NHÂN: ĐĂNG NHẬP / ĐĂNG KÝ / ĐĂNG XUẤT, VI/EN, DARK MODE
+        // =================================================================
+        function toggleUserDropdown(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('userDropdownMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('userMenuWrapper');
+            const menu = document.getElementById('userDropdownMenu');
+            if (wrapper && menu && !wrapper.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        function openAuthModal(mode) {
+            document.getElementById('userDropdownMenu').classList.add('hidden');
+            switchAuthTab(mode);
+            toggleModal('authModal', true);
+        }
+
+        function switchAuthTab(mode) {
+            const loginForm = document.getElementById('authLoginForm');
+            const regForm = document.getElementById('authRegisterForm');
+            const tabLogin = document.getElementById('authTabLogin');
+            const tabReg = document.getElementById('authTabRegister');
+
+            if (mode === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                tabLogin.className = 'px-3.5 py-1.5 rounded-lg text-sm font-extrabold bg-hnue-700 text-white';
+                tabReg.className = 'px-3.5 py-1.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100';
+            } else {
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                tabReg.className = 'px-3.5 py-1.5 rounded-lg text-sm font-extrabold bg-emerald-600 text-white';
+                tabLogin.className = 'px-3.5 py-1.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100';
+            }
+        }
+
+        function submitAuth(mode) {
+            if (mode === 'login') {
+                const email = document.getElementById('loginEmailInput').value.trim() || 'gv.vatli@hnue.edu.vn';
+                currentState.isLoggedIn = true;
+                currentState.userEmail = email;
+                currentState.userName = email.split('@')[0];
+                updateUserHeaderUI();
+                toggleModal('authModal', false);
+                showToast('Đăng nhập thành công!');
+            } else {
+                const name = document.getElementById('regNameInput').value.trim() || 'GV. Khoa Vật lí';
+                const email = document.getElementById('regEmailInput').value.trim() || 'giaovien.khtn@hnue.edu.vn';
+                currentState.isLoggedIn = true;
+                currentState.userName = name;
+                currentState.userEmail = email;
+                updateUserHeaderUI();
+                toggleModal('authModal', false);
+                showToast(`Đã đăng ký và đăng nhập tài khoản: ${name}`);
+            }
+        }
+
+        function handleLogout() {
+            currentState.isLoggedIn = false;
+            currentState.userName = 'Khách (Chưa đăng nhập)';
+            currentState.userEmail = 'Nhấn Đăng nhập để đồng bộ';
+            updateUserHeaderUI();
+            document.getElementById('userDropdownMenu').classList.add('hidden');
+            showToast('Đã đăng xuất tài khoản.');
+        }
+
+        function updateUserHeaderUI() {
+            document.getElementById('headerUserName').textContent = currentState.userName;
+            document.getElementById('menuAccountName').textContent = currentState.userName;
+            document.getElementById('menuAccountEmail').textContent = currentState.userEmail;
+
+            const statusEl = document.getElementById('headerUserStatus');
+            if (currentState.isLoggedIn) {
+                statusEl.textContent = currentState.selectedLang === 'EN' ? '● Signed In' : '● Đã đăng nhập';
+                statusEl.className = 'text-[10px] text-emerald-600 font-semibold mt-0.5';
+            } else {
+                statusEl.textContent = currentState.selectedLang === 'EN' ? '○ Guest Mode' : '○ Chưa đăng nhập';
+                statusEl.className = 'text-[10px] text-slate-400 font-semibold mt-0.5';
+            }
+        }
+
+        function setLanguageMode(lang) {
+            currentState.selectedLang = lang;
+            const btnVI = document.getElementById('langBtnVI');
+            const btnEN = document.getElementById('langBtnEN');
+
+            if (lang === 'VI') {
+                btnVI.className = 'py-1.5 px-2 rounded-lg bg-white text-hnue-800 font-bold text-xs shadow-xs transition-all';
+                btnEN.className = 'py-1.5 px-2 rounded-lg text-slate-600 font-bold text-xs hover:text-slate-900 transition-all';
+            } else {
+                btnEN.className = 'py-1.5 px-2 rounded-lg bg-white text-hnue-800 font-bold text-xs shadow-xs transition-all';
+                btnVI.className = 'py-1.5 px-2 rounded-lg text-slate-600 font-bold text-xs hover:text-slate-900 transition-all';
+            }
+
+            const dict = uiTranslations[lang] || uiTranslations.VI;
+            document.getElementById('uiHeaderSubtitle').textContent = dict.headerSubtitle;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[key]) {
+                    el.textContent = dict[key];
+                }
+            });
+
+            updateUserHeaderUI();
+            renderKHBDAndWorksheet();
+            showToast(lang === 'EN' ? 'Switched to English / CLIL Mode' : 'Đã chuyển sang Tiếng Việt');
+        }
+
+        function toggleDarkMode() {
+            currentState.isDarkMode = !currentState.isDarkMode;
+            const htmlEl = document.documentElement;
+            const switchBtn = document.getElementById('darkModeSwitch');
+            const knob = document.getElementById('darkModeKnob');
+            const icon = document.getElementById('darkModeIcon');
+
+            if (currentState.isDarkMode) {
+                htmlEl.classList.add('dark');
+                switchBtn.className = 'w-11 h-6 bg-hnue-600 rounded-full relative transition-colors duration-200 focus:outline-none p-0.5';
+                knob.className = 'block w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 translate-x-5';
+                icon.className = 'fa-solid fa-sun text-amber-400 text-sm';
+                showToast('Đã bật Giao diện tối (Dark Mode)');
+            } else {
+                htmlEl.classList.remove('dark');
+                switchBtn.className = 'w-11 h-6 bg-slate-300 rounded-full relative transition-colors duration-200 focus:outline-none p-0.5';
+                knob.className = 'block w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 translate-x-0';
+                icon.className = 'fa-solid fa-moon text-slate-700 text-sm';
+                showToast('Đã chuyển về Giao diện sáng');
+            }
+        }
+
+        // Khởi tạo toàn bộ dữ liệu khi tải trang
+        window.addEventListener('DOMContentLoaded', function () {
+            populateClassDropdown();
+            populateLessonDropdown();
+            updateMaterialPreview();
+            setupInteractiveSimForCurrentLesson();
+            renderKHBDAndWorksheet();
+            renderRepoList();
+            renderClassCardsGrid();
+        });
+    </script>
+</body>
+</html>
