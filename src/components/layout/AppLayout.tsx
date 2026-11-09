@@ -21,6 +21,7 @@ import type { Profile } from "../../types/domain";
 import facultyLogo from "../../assets/LOGOKHOA2.png";
 import universityLogo from "../../assets/logo trường.png";
 import logoFull from "../../assets/LogoFull.png";
+import logoCompact from "../../assets/Logo bản rút gọn.png";
 
 export function AppLayout({
   children,
@@ -69,7 +70,22 @@ export function AppLayout({
     <>
       <header className="navbar">
         <Link className="brand" to="/" onClick={closeMenu}>
-          <img src={logoFull} alt="ScienceLab" className="brand-logo" />
+          <img
+            src={logoFull}
+            alt="ScienceLab"
+            className="brand-logo brand-logo-full"
+          />
+          <img
+            src={logoCompact}
+            alt="ScienceLab"
+            className="brand-logo brand-logo-compact"
+          />
+          {/* <div>
+            <p className="brand-name">ScienceLab</p>
+            <p className="brand-caption">
+              Hỗ trợ giáo viên Vật lí xây dựng bài giảng
+            </p>
+          </div> */}
         </Link>
         <button
           className="mobile-menu-button"
@@ -119,7 +135,9 @@ export function AppLayout({
                   onClick={() => setIsAccountOpen((current) => !current)}
                   aria-expanded={isAccountOpen}
                 >
-                  <span>Xin chào, {displayName}</span>
+                  <span className="account-greeting">
+                    Xin chào, {displayName}
+                  </span>
                 </button>
                 {isAccountOpen && (
                   <div className="account-popover">
@@ -178,7 +196,8 @@ export function AppLayout({
                 type="button"
                 onClick={() => void supabase?.auth.signOut()}
               >
-                <LogOut size={16} /> Đăng xuất
+                <LogOut size={16} />{" "}
+                <span className="logout-text">Đăng xuất</span>
               </button>
             </>
           ) : (

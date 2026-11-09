@@ -407,6 +407,15 @@ button:disabled,
   height: 50px;
   object-fit: contain;
 }
+
+.brand-logo-full {
+  display: inline-block;
+}
+
+.brand-logo-compact {
+  display: none;
+}
+
 .main-nav {
   display: flex;
   align-items: center;
@@ -2054,6 +2063,34 @@ iframe.document-frame,
 @media (max-width: 820px) {
   .mobile-menu-button {
     display: inline-flex;
+    border: none;
+    background: transparent;
+    outline: none;
+  }
+
+  .mobile-menu-button:focus-visible {
+    outline: none;
+  }
+
+  .brand-logo-full {
+    display: none;
+  }
+
+  .brand-logo-compact {
+    display: inline-block;
+    height: 40px;
+  }
+
+  .account-greeting {
+    display: none;
+  }
+
+  .logout-text {
+    display: none;
+  }
+
+  .account-trigger {
+    display: none;
   }
 
   .main-nav {
