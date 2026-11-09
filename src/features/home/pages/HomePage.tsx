@@ -1,5 +1,6 @@
 import { ArrowRight, BookOpen, ChevronRight, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import backgroundImage from '../assets/nền.png'
 import type { Session } from '@supabase/supabase-js'
 
 export function HomePage({ session }: { session: Session | null }) {

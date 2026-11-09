@@ -6,6 +6,7 @@ import { ClassesPage } from './features/classes/pages/ClassesPage'
 import { HomePage } from './features/home/pages/HomePage'
 import { LessonsPage } from './features/lessons/pages/LessonsPage'
 import { LessonDetailPage } from './features/lessons/pages/LessonDetailPage'
+import { GradeDetailPage } from './features/lessons/pages/GradeDetailPage'
 import { LessonPlansPage } from './features/lesson-plans/pages/LessonPlansPage'
 import { LoginPage } from './features/auth/pages/LoginPage'
 import './App.css'
@@ -34,6 +35,7 @@ function AppRoutes({ session, profile, isLoading, profileError }: {
           <Route path="/" element={<HomePage session={session} />} />
           <Route path="/lessons" element={<LessonsPage session={session} />} />
           <Route path="/lessons/:lessonId" element={<LessonDetailPage session={session} />} />
+          <Route path="/lessons/grade/:gradeNumber" element={<GradeDetailPage session={session} />} />
           <Route path="/classes" element={<ClassesPage session={session} />} />
           <Route path="/lesson-plans" element={<LessonPlansPage session={session} />} />
           <Route path="/admin" element={<AdminPage profile={profile} session={session} />} />
