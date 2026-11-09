@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Session } from '@supabase/supabase-js'
-import { BookOpen, ChevronDown, Eye, Plus, Save, Trash2 } from 'lucide-react'
+import { BookOpen, Eye, Plus, Save, Trash2 } from 'lucide-react'
 import {
   createAdminLesson,
   createAdminChapter,
@@ -82,7 +82,7 @@ export function AdminPage({ profile, session }: { profile: Profile | null; sessi
     const target = index + direction
     if (target < 0 || target >= blocks.length) return
     const next = [...blocks]
-    ;[next[index], next[target]] = [next[target], next[index]]
+      ;[next[index], next[target]] = [next[target], next[index]]
     setBlocks(next)
   }
 
@@ -157,7 +157,6 @@ export function AdminPage({ profile, session }: { profile: Profile | null; sessi
             {grades.map((grade) => <option key={grade.id} value={grade.id}>{grade.name}</option>)}
           </select>
         </div>
-        <ChevronDown className="step-arrow" size={20} />
       </div>
       <div className={`selection-step ${selectedGradeId && chapters.length ? 'is-active' : 'is-disabled'}`}>
         <div className="step-number">2</div>

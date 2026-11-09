@@ -20,6 +20,7 @@ import { supabase } from "../../lib/supabase";
 import type { Profile } from "../../types/domain";
 import facultyLogo from "../../assets/LOGOKHOA2.png";
 import universityLogo from "../../assets/logo trường.png";
+import logoFull from "../../assets/LogoFull.png";
 
 export function AppLayout({
   children,
@@ -68,13 +69,7 @@ export function AppLayout({
     <>
       <header className="navbar">
         <Link className="brand" to="/" onClick={closeMenu}>
-          <div className="brand-mark">SL</div>
-          <div>
-            <p className="brand-name">ScienceLab</p>
-            <p className="brand-caption">
-              Hỗ trợ giáo viên Vật lí xây dựng bài giảng
-            </p>
-          </div>
+          <img src={logoFull} alt="ScienceLab" className="brand-logo" />
         </Link>
         <button
           className="mobile-menu-button"
@@ -215,8 +210,16 @@ export function AppLayout({
               className="footer-logos"
               aria-label="Logo Trường Đại học Sư phạm Hà Nội và Khoa Vật lí"
             >
-              <img className="footer-logo footer-logo-school" src={universityLogo} alt="Logo Trường Đại học Sư phạm Hà Nội" />
-              <img className="footer-logo footer-logo-physics" src={facultyLogo} alt="Logo Khoa Vật lí" />
+              <img
+                className="footer-logo footer-logo-school"
+                src={universityLogo}
+                alt="Logo Trường Đại học Sư phạm Hà Nội"
+              />
+              <img
+                className="footer-logo footer-logo-physics"
+                src={facultyLogo}
+                alt="Logo Khoa Vật lí"
+              />
             </div>
             <h2>ScienceLab</h2>
             <strong>
@@ -239,13 +242,25 @@ export function AppLayout({
           <div className="footer-meta">
             <button
               type="button"
+              className="footer-top-button"
+              aria-label="Quay lại đầu trang"
+              title="Quay lại đầu trang"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
-              Quay lại đầu trang <ArrowUp size={16} />
+              <ArrowUp size={20} />
             </button>
-            <span>
-              <MapPin size={15} /> Khoa Vật lí · Trường Đại học Sư phạm Hà Nội
+            <span className="footer-address">
+              <MapPin size={15} /> Khoa Vật lí · Trường Đại học Sư phạm Hà Nội ·
+              136 Xuân Thủy, Cầu Giấy, Hà Nội
             </span>
+            <iframe
+              className="footer-map"
+              title="Bản đồ Khoa Vật lí - Trường Đại học Sư phạm Hà Nội"
+              src="https://maps.google.com/maps?q=Khoa%20V%E1%BA%ADt%20l%C3%AD%2C%20Tr%C6%B0%E1%BB%9Dng%20%C4%90%E1%BA%A1i%20h%E1%BB%8Dc%20S%C6%B0%20ph%E1%BA%A1m%20H%C3%A0%20N%E1%BB%99i%2C%20136%20Xu%C3%A2n%20Th%E1%BB%A7y%2C%20C%E1%BA%A7u%20Gi%E1%BA%A5y%2C%20H%C3%A0%20N%E1%BB%99i&z=16&output=embed"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
           </div>
         </div>
       </footer>

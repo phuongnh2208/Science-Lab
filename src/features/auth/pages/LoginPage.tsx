@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { LogIn, Mail, UserPlus } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../../../lib/supabase'
+import logoFull from '../../../assets/LogoFull.png'
 
 type AuthMode = 'login' | 'register'
 
@@ -75,7 +76,7 @@ export function LoginPage() {
 
   return <main className="login-page">
     <section className="login-card">
-      <div className="login-brand"><span className="brand-mark">SL</span><div><strong>ScienceLab</strong><small>Biến bài học thành trải nghiệm khám phá.</small></div></div>
+      <div className="login-brand"><img src={logoFull} alt="ScienceLab" className="brand-logo" /><div><strong>ScienceLab</strong><small>Biến bài học thành trải nghiệm khám phá.</small></div></div>
       <div className="login-intro"><p className="eyebrow">{isRegister ? 'Tạo tài khoản' : 'Chào mừng trở lại'}</p><h1>{isRegister ? 'Bắt đầu xây dựng bài học.' : 'Đăng nhập vào ScienceLab.'}</h1><p>{isRegister ? 'Lưu hồ sơ lớp, học liệu và kế hoạch bài dạy của bạn.' : 'Tiếp tục khai thác thư viện bài học và kho KHBD.'}</p></div>
       <form className="login-form" onSubmit={(event) => void handleSubmit(event)}>
         {isRegister && <label>Họ và tên<input required value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Ví dụ: Nguyễn Văn An" autoComplete="name" /></label>}
